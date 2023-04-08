@@ -1,0 +1,40 @@
+# Python/Django
+__pycache__\
+*.pyc
+*.bak
+*.swp
+*.~*
+
+# Django generated files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+media\
+static\
+.env
+.env.*
+
+# Dependency directories
+venv\
+env\
+
+# Compiled Python files
+*.pyc
+
+# Environment variables
+.env
+
+# Ignore Windows metadata files
+Thumbs.db
+Desktop.ini
+
+# PostgreSQL files to ignore
+*.psql
+*.backup
+*.pgdump
+*.sql
+*.dump
+*.tar
+*.tar.gz
