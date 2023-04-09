@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'trip',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -133,4 +134,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 AUTH_USER_MODEL = 'users.User'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+JWT_CODE = env('JWT_CODE')
