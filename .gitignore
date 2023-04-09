@@ -19,6 +19,7 @@ static\
 # Dependency directories
 venv\
 env\
+tripgenie\
 
 # Compiled Python files
 *.pyc
