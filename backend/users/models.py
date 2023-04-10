@@ -27,6 +27,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_premium = models.BooleanField(default=False)
+    username = None
     
     
     USERNAME_FIELD = 'email'

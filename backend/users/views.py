@@ -7,6 +7,7 @@ import jwt, datetime
 from trip_genie.settings import JWT_CODE
 
 class RegisterView(APIView):
+    print('register')
     def post(self,request):
         serializer = UserSerializers(data=request.data)
         if serializer.is_valid():
@@ -42,20 +43,21 @@ class Login(APIView):
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
             'jwt':token,
-            'message':True
+            'message':True,
+            'name':user.name
         }
-        print('you are logged')
         return response
     
     
 class UserViews(APIView):
     def get(self, request):
         token = request.COOKIES.get('jwt')
+        print(token)
         if not token:
             raise AuthenticationFailed('Unauthenticated')
         
         try:
-            payload = jwt.decode(token, JWT_CODE, algorithms=['HS256'])
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated')
         
