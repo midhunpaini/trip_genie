@@ -1,7 +1,7 @@
 import  { useContext,useState } from 'react'
-import ModalContext from '../utils/context/modalContext';
-import useUser from '../utils/hooks/useUser';
-import UserContext from '../utils/context/userContext';
+import ModalContext from '../../utils/context/modalContext';
+import useUser from '../../utils/hooks/useUser';
+import UserContext from '../../utils/context/userContext';
 
 const Login = () => {
   const {setUser} = useContext(UserContext)

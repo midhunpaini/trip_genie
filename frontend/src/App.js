@@ -1,5 +1,5 @@
+import { RouterProvider, createBrowserRouter, Redirect } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -10,9 +10,9 @@ import useUser from "./utils/hooks/useUser";
 import UserContext from "./utils/context/userContext";
 import { logoutUser } from "./utils/helper";
 
-
 const App = () => {
-  
+  const [modal, setModal] = useState("hide");
+  const user = useUser();
   const appRouter = createBrowserRouter([
     {
       path: "/",
@@ -28,21 +28,17 @@ const App = () => {
     },
     {
       path: "/trip",
-      element: <Trip />,
+      element: <Trip/>
     },
   ]);
-  const [modal, setModal] = useState("hide");
-  const user = useUser();
-  const [userVal, setUser] = useState(user);
-
-
+  
   return (
     <>
       <UserContext.Provider
         value={{
           user: user.user,
-          setUser: user.setUser, 
-          logout:logoutUser,
+          setUser: user.setUser,
+          logout: logoutUser,
         }}
       >
         <ModalContext.Provider

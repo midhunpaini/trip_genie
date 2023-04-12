@@ -1,9 +1,9 @@
 import { useState,useEffect,useContext } from "react";
 import jwt_decode from "jwt-decode"
-import { loginUser, registerUser } from "../utils/helper";
-import ModalContext from "../utils/context/modalContext";
-import UserContext from "../utils/context/userContext";
-import { REGISTER_URL } from "../constants";
+import { loginUser, registerUser } from "../../utils/helper";
+import ModalContext from "../../utils/context/modalContext";
+import UserContext from "../../utils/context/userContext";
+import { REGISTER_URL } from "../../constants";
 
 const Register = () => {
   const {setUser} = useContext(UserContext)
