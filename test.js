@@ -1,0 +1,1 @@
+{[{'itinerary':{'Day 1':'somthing', 'Day 2':'somthing'},'places_to_visit' : ['place1','place2','etc'],'accommodation_option' :['option1','option2'], 'local_delicacies' : ['option1','option2'], 'travel_option' : ['option1','option2'],}]}

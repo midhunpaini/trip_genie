@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTrip } from "../../utils/redux/tripSlice";
 
-
-const TripForm = ({ setTripData,setSubmitForm }) => {
+const TripForm = ({ setSubmitForm }) => {
   const [start_date, setStartDate] = useState("");
   const [end_date, setEndDate] = useState("");
   const [budget, setBudget] = useState("");
@@ -12,9 +13,12 @@ const TripForm = ({ setTripData,setSubmitForm }) => {
   const [num_persons, setNumPersons] = useState("");
   const [group_type, setGroupType] = useState("");
 
+  const dispatch = useDispatch();
+
   const handleSubmit = (e) => {
+    dispatch(addTrip({ isLoading: true }));
     e.preventDefault();
-    setSubmitForm(true)
+    setSubmitForm(true);
     const data = {
       start_date,
       end_date,
@@ -35,16 +39,17 @@ const TripForm = ({ setTripData,setSubmitForm }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setTripData(data);
+        dispatch(addTrip({ isLoaded:true, isLoading: false, data: data }));
         console.log(data);
       })
       .catch((error) => {
         console.log(error);
+        dispatch(addTrip({ isLoading: false, isLoadingFailed: true }));
       });
   };
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-50">
       <form
         onSubmit={handleSubmit}
         className="border mb-9 bg-[#f1c488b9] border-[#a56b1eb9] rounded-lg shadow-2xl shadow-[#a56b1eb9] mx-auto max-w-lg p-6"

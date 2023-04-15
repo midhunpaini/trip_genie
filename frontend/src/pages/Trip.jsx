@@ -1,28 +1,48 @@
-import { useState,useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Header from "../components/common/Header";
 import AddTrip from "../components/trip/AddTrip";
 import TripSearchResult from "../components/trip/TripSearchResult";
-import TripLoading from "../components/trip/TripLoading";
 import TripForm from "../components/trip/TripForm";
 import { Navigate } from "react-router-dom";
 import UserContext from "../utils/context/userContext";
-import TripResult from "../components/trip/TripResultButton";
+import Footer from "../components/common/Footer";
 
 const Trip = () => {
-  const [ tripData, setTripData ] = useState(null);
-  const [ submitForm, setSubmitForm ] = useState(false)
-  const [ showForm, setShowForm ] = useState(false)
-  const  {user}  = useContext(UserContext)
-  if(!user){
-    return <Navigate to="/"/>
+  const [submitForm, setSubmitForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    const setHeight = () => {
+      const height = window.innerHeight;
+      document.documentElement.style.setProperty(
+        "--page-height",
+        `${height}px`
+      );
+    };
+    setHeight();
+    window.addEventListener("resize", setHeight);
+    return () => {
+      window.removeEventListener("resize", setHeight);
+    };
+  }, []);
+
+  if (!user) {
+    return <Navigate to="/" />;
   }
+
   return (
-    <div className="h-[100vh]">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
-      {!submitForm?<AddTrip setShowForm={setShowForm}/>:null}
-      {showForm&&!submitForm?<TripForm setTripData={setTripData} setSubmitForm={setSubmitForm}/>:null}
-      {submitForm?<TripSearchResult data={tripData} tripSubmit={submitForm}/>:null}
+      <div className="flex-grow">
+        {!submitForm ? <AddTrip setShowForm={setShowForm} /> : null}
+        {showForm && !submitForm ? (
+          <TripForm setSubmitForm={setSubmitForm} />
+        ) : null}
+        {submitForm ? <TripSearchResult tripSubmit={submitForm} /> : null}
+      </div>
+
+      <Footer />
     </div>
   );
 };

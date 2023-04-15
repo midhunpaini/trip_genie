@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'users',
     'trip',
     'corsheaders',
+    'main'
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,4 @@ CORS_ALLOW_CREDENTIALS = True
 JWT_CODE = env('JWT_CODE')
 GPT_KEY = env('GPT_key')
 GPT_ORG_ID = env('GPT_ORG_ID')
+GOOGLE_PLACES_KEY = env('GOOGLE_PLACES')

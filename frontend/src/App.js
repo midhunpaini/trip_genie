@@ -1,4 +1,8 @@
-import { RouterProvider, createBrowserRouter, Redirect } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  Redirect,
+} from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import Landing from "./pages/Landing";
 import About from "./pages/About";
@@ -9,6 +13,8 @@ import ModalContext from "./utils/context/modalContext";
 import useUser from "./utils/hooks/useUser";
 import UserContext from "./utils/context/userContext";
 import { logoutUser } from "./utils/helper";
+import { Provider } from "react-redux";
+import store from "./utils/redux/store";
 
 const App = () => {
   const [modal, setModal] = useState("hide");
@@ -28,10 +34,14 @@ const App = () => {
     },
     {
       path: "/trip",
-      element: <Trip/>
+      element: (
+        <Provider store={store}>
+          <Trip />
+        </Provider>
+      ),
     },
   ]);
-  
+
   return (
     <>
       <UserContext.Provider

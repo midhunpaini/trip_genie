@@ -5,15 +5,19 @@ import PlacesToVisit from './PlacesToVisit'
 import AccommodationOptions from './AccommodationOptions'
 import LocalDelicacies from'./LocalDelicacies'
 import TravelOptions from './TravelOptions'
+import { useSelector } from 'react-redux'
+import SaveTrip from './SaveTrip'
 
-const TripSearchResult = ({data}) => {
+const TripSearchResult = () => {
+  const data =  useSelector(store => store.trip.value.data)
   return (
     <div className='mt-32'>
-        <TripResultButton data={data?.itinerary} sectionName='Itinerary' component= { <Itinerary itinerary={data?.itinerary}/> } />
-        <TripResultButton data={data?.places_to_visit} sectionName ='Places to Visit' component={ <PlacesToVisit placesToVisit={data?.places_to_visit}/> }/>
-        <TripResultButton data={data?.accommodation_options} sectionName ='Accommodation Options' component={ <AccommodationOptions accommodationOptions={data?.accommodation_options}/> } />
-        <TripResultButton data={data?.local_delicacies} sectionName ='Local Delicacies' component={ <LocalDelicacies localDelicacies={data?.local_delicacies}/> }/>
-        <TripResultButton data={data?.travel_options} sectionName ='Travel Options' component={<TravelOptions travelOptions={data?.travel_options}/> }/>
+        <TripResultButton  sectionName='Itinerary' component= { <Itinerary/> } />
+        <TripResultButton  sectionName ='Places to Visit' component={ <PlacesToVisit/> }/>
+        <TripResultButton  sectionName ='Accommodation Options' component={ <AccommodationOptions /> } />
+        <TripResultButton  sectionName ='Local Delicacies' component={ <LocalDelicacies /> }/>
+        <TripResultButton  sectionName ='Travel Options' component={<TravelOptions /> }/>
+        <SaveTrip/>
     </div>
   )
 }

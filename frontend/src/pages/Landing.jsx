@@ -4,6 +4,7 @@ import Hero from '../components/landing/Hero';
 import Modal from '../components/common/Modal'
 import { useContext } from "react";
 import ModalContext from '../utils/context/modalContext';
+import Footer from '../components/common/Footer';
 
 
 
@@ -15,6 +16,7 @@ const {modal} = useContext(ModalContext)
       {modal==="hide"?null:<Modal/>}
       <Header/>
       <Hero/>
+      <Footer/>
     </div>
   )
 }
