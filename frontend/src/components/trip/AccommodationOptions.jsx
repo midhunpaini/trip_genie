@@ -1,12 +1,11 @@
 import { useSelector } from "react-redux";
 
 const AccommodationOptions = () => {
-  const data = useSelector((store) => store.trip.value.data.accommodation);
-  const options = data?.split("Accommodation Options: ")[1].split(", ");
+  const data = useSelector((store) => store.trip.value.data.accommodation_options);
   return (
     <div className="mb-8">
       <ul className="list-disc list-inside">
-        {options.map((option, i) => (
+        {data.map((option, i) => (
           <li key={i} className="mb-1">
             {option}
           </li>

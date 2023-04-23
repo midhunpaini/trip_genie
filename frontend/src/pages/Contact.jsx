@@ -1,27 +1,79 @@
-import React from "react";
-import Header from "../components/common/Header";
-import Modal from "../components/common/Modal";
+import React, { useState } from "react";
+import Header from "../components/layouts/Header";
+import Modal from "../components/ui/Modal";
 import { useContext } from "react";
 import ModalContext from "../utils/context/modalContext";
-import Footer from "../components/common/Footer";
+import Footer from "../components/layouts/Footer";
 
 const Contact = () => {
-  const { modal } = useContext(ModalContext);
+  const { modal, setModal } = useContext(ModalContext);
+  const [name, setName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [currentError, setCurrentError] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!email || !message || !name) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
+    setAlertMessage("Thank you for contacting us. We will get back to you soon.");
+    setModal('alert')
+    setShowAlert(true);
+    document.getElementById('name').value=''
+    document.getElementById('email').value=''
+    document.getElementById('message').value=''
+    const response = await fetch("http://localhost:8000/main/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        email,
+        name,
+        message,
+      }),
+    });
+    
+  }
   return (
     <>
       {modal === "hide" ? null : <Modal />}
       <Header />
+
       <div className="max-w-7xl mx-auto mt-28 px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-[#5f4018]">
           Contact Us
         </h1>
         <div className="max-w-lg mx-auto">
-          <form className="grid grid-cols-1 gap-y-6">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-y-6">
+            {errorMessage && errorMessage === currentError ? (
+              <div
+                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                <span className="block sm:inline">{errorMessage}</span>
+                <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                  <svg
+                    className="fill-current h-6 w-6 text-red-500"
+                    role="button"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  ></svg>
+                </span>
+              </div>
+            ) : null}
             <div>
               <label htmlFor="name" className="sr-only">
                 Name
               </label>
               <input
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setCurrentError(e.target.value);
+                }}
                 type="text"
                 id="name"
                 name="name"
@@ -36,6 +88,10 @@ const Contact = () => {
                 Email
               </label>
               <input
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setCurrentError(e.target.value);
+                }}
                 id="email"
                 name="email"
                 type="email"
@@ -50,6 +106,10 @@ const Contact = () => {
                 Message
               </label>
               <textarea
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  setCurrentError(e.target.value);
+                }}
                 id="message"
                 name="message"
                 rows="5"

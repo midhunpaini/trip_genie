@@ -15,6 +15,7 @@ import UserContext from "./utils/context/userContext";
 import { logoutUser } from "./utils/helper";
 import { Provider } from "react-redux";
 import store from "./utils/redux/store";
+import Testing from "./pages/Testing";
 
 const App = () => {
   const [modal, setModal] = useState("hide");
@@ -40,6 +41,10 @@ const App = () => {
         </Provider>
       ),
     },
+    {
+      path: "/test",
+      element: <Testing/>,
+    }
   ]);
 
   return (

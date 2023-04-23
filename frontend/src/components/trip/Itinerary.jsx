@@ -1,19 +1,13 @@
 import { useSelector } from "react-redux";
 
 const Itinerary = () => {
-  const data = useSelector((store) => store.trip.value.data);
-  console.log(data)
+  const data = useSelector((store) => store.itinerary.value.data.itinerary);
   return (
     <div className="mb-8">
       <ul className="list-disc list-inside">
-        {data.itinerary
-          ?.split("\n\n")
-          .filter((line) => line.startsWith("Day"))
-          .map((day, i) => (
-            <li key={i} className="mb-1">
-              {day}
-            </li>
-          ))}
+        {data.map((day) => (
+          <li key={day}>{day}</li>
+        ))}
       </ul>
     </div>
   );

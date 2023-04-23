@@ -1,22 +1,7 @@
-import { useContext } from "react";
 import heroImage from "../../assets/images/hero.jpg";
-import ModalContext from "../../utils/context/modalContext";
-import UserContext from "../../utils/context/userContext";
-import { useNavigate } from "react-router-dom";
+import StartButton from "./StartTripButton";
 
 const Hero = () => {
-  const { setModal } = useContext(ModalContext);
-  const { user } = useContext(UserContext);
-  const navigate = useNavigate();
-
-  function handleClick() {
-    if (user) {
-      navigate("/trip");
-    } else {
-      setModal("login");
-    }
-  }
-
   return (
     <section
       className="hero relative w-full"
@@ -41,13 +26,7 @@ const Hero = () => {
           relaxing beach vacation or an exciting city break, we've got you
           covered.
         </p>
-
-        <button
-          onClick={handleClick}
-          className="bg-[#a57c48] text-white py-2 px-4 rounded-md text-lg font-semibold hover:bg-[#8b623f] transition-colors duration-300"
-        >
-          Get Started
-        </button>
+        <StartButton value = 'Get Started'/>
       </div>
     </section>
   );

@@ -1,6 +1,26 @@
-
-export const REGISTER_URL = "http://localhost:8000/users/register"
-
-export const LOGOUT_URL = "http://localhost:8000/users/logout"
-
-export const GET_USER =''
+export const currency_type = [
+    "Indian Rupee",
+    "US Dollar",
+    "Euro",
+    "Japanese Yen",
+    "British Pound Sterling",
+    "Swiss Franc",
+    "Canadian Dollar",
+    "Australian Dollar",
+    "Chinese Yuan",
+    "Hong Kong Dollar",
+    "Singapore Dollar",
+    "South Korean Won",
+  ];
+  export const travel_preferences_option = [
+    "outdoor activities",
+    "cultural experiences",
+    "beach and water activities",
+    "adventure sports",
+    "wildlife safaris",
+    "city sightseeing",
+    "relaxation and spa",
+    "shopping and fashion",
+    "historical tours",
+    "religious and spiritual journeys",
+  ];

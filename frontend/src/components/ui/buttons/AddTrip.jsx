@@ -1,4 +1,4 @@
-import addImage from "../../assets/images/add.png";
+import addImage from "../../../assets/images/add.png";
 
 const AddTrip = ({setShowForm}) => {
 

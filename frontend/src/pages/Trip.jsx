@@ -1,11 +1,11 @@
 import { useState, useContext, useEffect } from "react";
-import Header from "../components/common/Header";
-import AddTrip from "../components/trip/AddTrip";
+import Header from "../components/layouts/Header";
+import AddTrip from "../components/ui/buttons/AddTrip";
 import TripSearchResult from "../components/trip/TripSearchResult";
-import TripForm from "../components/trip/TripForm";
+import TripForm from "../components/forms/TripForm";
 import { Navigate } from "react-router-dom";
 import UserContext from "../utils/context/userContext";
-import Footer from "../components/common/Footer";
+import Footer from "../components/layouts/Footer";
 
 const Trip = () => {
   const [submitForm, setSubmitForm] = useState(false);

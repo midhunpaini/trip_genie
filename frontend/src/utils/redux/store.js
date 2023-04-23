@@ -1,9 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import tripReducer from "./tripSlice";
+import itineraryReducer from "./itinerarySlice";
+import placeSlice from "./placeSlice";
+import accommodationSlice from "./accommodationSlice";
+import localDelicacySlice from "./localDelicacySlice";
+import travelOptionSlice from "./travelOptionSlice";
 
 const store = configureStore({
   reducer: {
-    trip: tripReducer,
+    itinerary: itineraryReducer,
+    place: placeSlice,
+    accommodation: accommodationSlice,
+    localDelicacy:localDelicacySlice,
+    travelOption:travelOptionSlice
   },
 });
 

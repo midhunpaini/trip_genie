@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 
+
+const userApi = process.env.REACT_APP_GET_USER_API
 const useUser = () => {
   const [user, setUser] = useState()
 
@@ -9,7 +11,7 @@ const useUser = () => {
 
   async function getUser() {
     try {
-      const data = await fetch("http://localhost:8000/users/user", {
+      const data = await fetch(userApi, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       })

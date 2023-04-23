@@ -1,8 +1,9 @@
 import  { useContext,useState } from 'react'
 import ModalContext from '../../utils/context/modalContext';
-import useUser from '../../utils/hooks/useUser';
 import UserContext from '../../utils/context/userContext';
 
+
+const loginApi=process.env.REACT_APP_GET_lOGIN_API
 const Login = () => {
   const {setUser} = useContext(UserContext)
   const {setModal} = useContext(ModalContext)
@@ -18,7 +19,7 @@ const Login = () => {
       setErrorMessage('Please fill in all fields.');
       return;
     }
-    const response=await fetch("http://localhost:8000/users/login", {
+    const response=await fetch(loginApi, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -37,8 +38,8 @@ const Login = () => {
     }
   };
     return (
-        <div className="flex justify-center items-center  bg-gray-100">
-          <div className="w-full max-w-md bg-white p-8 shadow-md">
+        <div className="flex justify-center items-center border bottom-9 rounded-xl border-black bg-gray-100">
+          <div className="w-full max-w-md bg-gray-100  m-8">
             <h2 className="font-bold text-2xl mb-4">Login</h2>
             {errorMessage && errorMessage===currentError?<div
           className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
@@ -57,15 +58,14 @@ const Login = () => {
         </div>:null}
             <form onSubmit={submit}>
               <div className="mb-4">
-                <label className="block font-medium mb-2" htmlFor="email">
-                  Email:
-                </label>
+                
                 <input
                  onChange={(e) => {
                   setEmail(e.target.value);
-                  setCurrentError(e.target.value)
+                  setCurrentError(e.target.value);
                 }}
-                  className="w-full p-2 rounded-md bg-gray-100 shadow-sm"
+                  placeholder='email'
+                  className="w-full p-2 rounded-md border border-gray-400 bg-gray-50 shadow-sm"
                   type="email"
                   id="lemail"
                   name="email"
@@ -73,15 +73,14 @@ const Login = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block font-medium mb-2" htmlFor="password">
-                  Password:
-                </label>
+                
                 <input
                  onChange={(e) => {
                   setPassword(e.target.value);
                   setCurrentError(e.target.value)
                 }}
-                  className="w-full p-2 rounded-md bg-gray-100 shadow-sm"
+                  className="w-full p-2 rounded-md border border-gray-400 bg-gray-50 shadow-sm"
+                  placeholder='password'
                   type="password"
                   id="lpassword"
                   name="password"

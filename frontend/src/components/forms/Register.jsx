@@ -1,10 +1,12 @@
 import { useState,useEffect,useContext } from "react";
 import jwt_decode from "jwt-decode"
-import { loginUser, registerUser } from "../../utils/helper";
+import { loginUser } from "../../utils/helper";
 import ModalContext from "../../utils/context/modalContext";
 import UserContext from "../../utils/context/userContext";
-import { REGISTER_URL } from "../../constants";
 
+
+const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const registerApi = process.env.REACT_APP_GOOGLE_REGISTER_API;
 const Register = () => {
   const {setUser} = useContext(UserContext)
   const {setModal} = useContext(ModalContext)
@@ -27,7 +29,7 @@ const Register = () => {
 
   useEffect(()=>{
     google.accounts.id.initialize({
-      client_id:"690124610682-f4qq2ir2c4tk5k1ga6sg71hu8ao6eo4b.apps.googleusercontent.com",
+      client_id:client_id,
       callback:handleCallBackResponse
     });
     google.accounts.id.renderButton(
@@ -42,7 +44,7 @@ const Register = () => {
       setErrorMessage("Please fill in all fields.");
       return;
     }
-    const response = await fetch(REGISTER_URL, {
+    const response = await fetch(registerApi, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -70,8 +72,8 @@ const Register = () => {
 
   
   return (
-    <div className="flex justify-center items-center  bg-gray-100">
-      <div className="signup-form-container max-w-md w-full p-8 bg-[#fff] rounded-md shadow-md">
+    <div className="flex justify-center items-center rounded-xl bg-gray-100">
+      <div className="signup-form-container max-w-md w-full m-8  bg-gray-100">
         <h2 className="font-bold text-2xl mb-4">Sign Up</h2>
         {errorMessage && errorMessage === currentError ? (
           <div
@@ -92,50 +94,47 @@ const Register = () => {
 
         <form onSubmit={submit}>
           <div className="form-group mb-4">
-            <label htmlFor="username" className="block font-semibold mb-2">
-              Name:
-            </label>
+            
             <input
               onChange={(e) => {
                 setName(e.target.value);
                 setCurrentError(e.target.value);
               }}
+              placeholder="name"
               type="text"
               id="name"
               name="name"
-              className="w-full px-3 py-2 border rounded-md bg-[#fff] shadow-sm focus:outline-none focus:border-[#7f5734]"
+              className="w-full px-3 py-2 border rounded-md  border-gray-400 bg-gray-50  shadow-sm focus:outline-none focus:border-[#7f5734]"
               required
             />
           </div>
           <div className="form-group mb-4">
-            <label htmlFor="email" className="block font-semibold mb-2">
-              Email:
-            </label>
+           
             <input
               onChange={(e) => {
                 setEmail(e.target.value);
                 setCurrentError(e.target.value);
               }}
+              placeholder="email"
               type="email"
               id="email"
               name="email"
-              className="w-full px-3 py-2 border rounded-md bg-[#fff] shadow-sm focus:outline-none focus:border-[#7f5734]"
+              className="w-full px-3 py-2 border rounded-md  border-gray-400 bg-gray-50  shadow-sm focus:outline-none focus:border-[#7f5734]"
               required
             />
           </div>
           <div className="form-group mb-4">
-            <label htmlFor="password" className="block font-semibold mb-2">
-              Password:
-            </label>
+          
             <input
               onChange={(e) => {
                 setPassword(e.target.value);
                 setCurrentError(e.target.value);
               }}
+              placeholder="password"
               type="password"
               id="password"
               name="password"
-              className="w-full px-3 py-2 border rounded-md bg-[#fff] shadow-sm focus:outline-none focus:border-[#7f5734]"
+              className="w-full px-3 py-2 border rounded-md  border-gray-400 bg-gray-50  shadow-sm focus:outline-none focus:border-[#7f5734]"
               required
             />
           </div>

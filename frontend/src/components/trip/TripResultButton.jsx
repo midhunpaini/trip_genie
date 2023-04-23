@@ -4,14 +4,15 @@ import closeImage from "../../assets/images/right.svg";
 import loadingImage from "../../assets/images/loading.png";
 import successImage from "../../assets/images/success.png";
 import failureImage from "../../assets/images/failed.png";
-import { useSelector } from "react-redux";
 
-const TripResultButton = ({ sectionName, component }) => {
+
+const TripResultButton = ({ datas, sectionName, component}) => {
+  const isFailure = datas?.isFailedLoading
+  const isSuccess = datas?.isLoaded
+  const isLoading = datas?.isLoading
   const [isOpen, setIsOpen] = useState("");
-  const isFailure = useSelector((store) => store.trip.value.isLoadingFailed);
-  const isSuccess = useSelector((store) => store.trip.value.isLoaded);
-  const isLoading = useSelector((store) => store.trip.value.isLoading);
-
+  const data = datas?.data
+  console.log(data)
   function handleClick() {
     if (isSuccess) {
       setIsOpen(!isOpen);

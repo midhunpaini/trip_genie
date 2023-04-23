@@ -1,24 +1,23 @@
 from django.db import models
 from django.utils import timezone
 from users.models import User
-# Create your models here.
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 class Hotel(models.Model):
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=100)
+    address = models.CharField(max_length=250)
     image_url = models.URLField()
     site = models.ForeignKey('Site', on_delete=models.CASCADE)
     
     
 class Itinerary(models.Model):
-    day = models.IntegerField()
-    description = models.TextField()
+    itinerary = ArrayField(models.CharField(max_length=500), blank=True, default=list)
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
     
     
 class LocalDelicacy(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=250)
     image_url = models.URLField()
     site = models.ForeignKey('Site', on_delete=models.CASCADE)
     
@@ -32,9 +31,9 @@ class PurchaseTrip(models.Model):
     
 class Site(models.Model):
     name = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
-    description = models.TextField()
-    image_url = models.URLField()
+    location = models.CharField(max_length=100,null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    image_url = models.URLField(null=True, blank=True, max_length=500)
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
 
     
@@ -57,9 +56,12 @@ class TravelPreference(models.Model):
     
 class Trip(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    current_location = models.CharField(max_length=100)
-    destination = models.CharField(max_length=100)
+    current_location = models.CharField(max_length=200)
+    destination = models.CharField(max_length=200)
     start_date = models.DateField()
     end_date = models.DateField()
-    budget = models.IntegerField()
+    no_of_people = models.IntegerField(null=True,blank=True)
+    budget = models.IntegerField(null=True,blank=True)
+    currency = models.IntegerField(null=True,blank=True)
+    
     

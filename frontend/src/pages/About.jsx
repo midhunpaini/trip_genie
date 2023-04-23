@@ -1,8 +1,8 @@
-import Header from "../components/common/Header";
-import Modal from "../components/common/Modal";
+import Header from "../components/layouts/Header";
+import Modal from "../components/ui/Modal";
 import { useContext } from "react";
 import ModalContext from "../utils/context/modalContext";
-import Footer from "../components/common/Footer"
+import Footer from "../components/layouts/Footer"
 
 const About = () => {
   const { modal } = useContext(ModalContext);

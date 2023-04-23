@@ -1,17 +1,10 @@
-import { useSelector } from "react-redux"
+import PlacesCarousal from "../ui/PlacesCarousal"
 
-const PlacesToVisit = () => {
-  const data = useSelector((store)=> store.trip.value.data.places)
-  const options = data?.split("Places to Visit: ")[1].split(", ");
+const PlacesToVisit = ({datas}) => {
+  console.log(datas,'inside places ro visit *******************************')
     return (
       <div className="mb-8">
-        <ul className="list-disc list-inside">
-        {options.map((option, i) => (
-          <li key={i} className="mb-1">
-            {option}
-          </li>
-        ))}
-      </ul>
+          <PlacesCarousal places = {datas}/>
       </div>
     )
   }
