@@ -137,6 +137,20 @@ USE_I18N = True
 USE_TZ = True
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',  # Rate limit for anonymous users
+        'user': '1000/hour', # Rate limit for authenticated users
+    },
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+}
+
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -158,7 +172,7 @@ JWT_CODE = env('JWT_CODE')
 GPT_KEY = env('GPT_key')
 GPT_ORG_ID = env('GPT_ORG_ID')
 GOOGLE_PLACES_KEY = env('GOOGLE_PLACES')
-
+TRIPADVISOR_KEY = env('TRIPADVISOR_API')
 
 # email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

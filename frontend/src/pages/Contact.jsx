@@ -6,6 +6,7 @@ import ModalContext from "../utils/context/modalContext";
 import Footer from "../components/layouts/Footer";
 
 const Contact = () => {
+  const alert = 'Thank you for contacting us. We will get back to you soon.';
   const { modal, setModal } = useContext(ModalContext);
   const [name, setName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,7 +41,7 @@ const Contact = () => {
   }
   return (
     <>
-      {modal === "hide" ? null : <Modal />}
+      {modal === "hide" ? null : <Modal message={alert}/>}
       <Header />
 
       <div className="max-w-7xl mx-auto mt-28 px-4 sm:px-6 lg:px-8 py-16">

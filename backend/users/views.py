@@ -5,8 +5,13 @@ from .models import User
 from .serializer import UserSerializers
 import jwt, datetime
 from trip_genie.settings import JWT_CODE
+from rest_framework.throttling import UserRateThrottle
+
+
+
 
 class RegisterView(APIView):
+    throttle_classes = [UserRateThrottle]
     print('register')
     def post(self,request):
         serializer = UserSerializers(data=request.data)
@@ -19,6 +24,7 @@ class RegisterView(APIView):
 
     
 class Login(APIView):
+    throttle_classes = [UserRateThrottle]
     def post(self, request):
         email = request.data['email']
         password = request.data['password']

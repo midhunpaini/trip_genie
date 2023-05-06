@@ -1,9 +1,10 @@
 import { useState,useEffect,useContext } from "react";
 import jwt_decode from "jwt-decode"
-import { loginUser } from "../../utils/helper";
+import { submitLogin } from "../../utils/helper";
 import ModalContext from "../../utils/context/modalContext";
 import UserContext from "../../utils/context/userContext";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const registerApi = process.env.REACT_APP_GOOGLE_REGISTER_API;
@@ -19,7 +20,6 @@ const Register = () => {
 
  function handleCallBackResponse(response){
     const userObject = jwt_decode(response.credential)
-    console.log(userObject)
     setName(userObject.name)
     setEmail(userObject.email)
     setPassword(userObject.name+email)
@@ -63,11 +63,14 @@ const Register = () => {
         setCurrentError(data.password[0]);
       }
     } else {
-      window.alert("Signed up sucessfully");
-      loginUser(email,password)
-      setUser(name)
-      setModal('hide')
+      toast.success('Signed Up successfully'); // Display success toast message
+      submitLogin(email, password);
+      setUser(name);
+      setTimeout(() => {
+        setModal('hide');
+      }, 6000); // Set 5 seconds delay
     }
+    
   };
 
   
@@ -91,7 +94,7 @@ const Register = () => {
             </span>
           </div>
         ) : null}
-
+        <ToastContainer />
         <form onSubmit={submit}>
           <div className="form-group mb-4">
             

@@ -1,5 +1,5 @@
 import openai
-from trip_genie.settings import GPT_KEY, GPT_ORG_ID
+from trip_genie.settings import GPT_KEY, GOOGLE_PLACES_KEY, TRIPADVISOR_KEY
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . models import *
@@ -7,26 +7,27 @@ import jwt
 from rest_framework.exceptions import AuthenticationFailed
 from users.models import User
 import googlemaps
-from trip_genie.settings import GOOGLE_PLACES_KEY
+import datetime
 from . helpers import *
-import requests
-import json
 from . serializers import *
 openai.api_key = GPT_KEY
+from rest_framework.throttling import UserRateThrottle
+from . booking import Booking
+from datetime import date
 
 
-class GPTView(APIView):
+class SetDestinationView(APIView):
+    throttle_classes = [UserRateThrottle]
+
     def post(self, request):
         start_date = request.data.get('start_date')
         end_date = request.data.get('end_date')
         budget = request.data.get('budget')
-        travel_preferences = request.data.get('interests')
-        dietary_requirements = request.data.get('dietary_requirements')
+        current_location = request.data.get('current_location')
         destination = request.data.get('destination')
         currency = request.data.get('currency')
-        current_location = request.data.get('current_location')
         num_people = request.data.get('num_persons')
-        group_type = request.data.get('group_type')
+
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -37,14 +38,151 @@ class GPTView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated')
 
+        today = datetime.date.today()
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+
+        if start_date > end_date or start_date < today:
+            return Response({"itinerary": [], "places": [],"message":"Invalid date"})
+
         user = User.objects.filter(id=payload['id']).first()
-        trip = Trip.objects.create(user=user, current_location=current_location,
-                                   destination=destination, start_date=start_date, end_date=end_date, budget=budget)
+
+        prompt = f"Is it practically possible to plan a {num_people} person vacation trip to {destination[0]} between {start_date} and {end_date} with a budget of {budget} {currency} which includes travel, food , accommodation and other expences? The output should be Yes or No"
+
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=3,
+            n=1,
+            stop=None,
+            temperature=0.9,
+        )
+
+        result = response.choices[0].text.strip()
+        if result == 'Yes':
+            trip = Trip.objects.create(
+                user=user,
+                current_location=current_location,
+                currency=currency,
+                no_of_people=num_people,
+                destination=destination[0],
+                destination_id=destination[1],
+                start_date=start_date,
+                end_date=end_date,
+                budget=budget
+            )
+            request.session['trip_id'] = trip.id
+            return Response({"result": True, "message": result, "trip":trip.id})
+        else:
+            return Response({"result": False, "message": f"No, it is not possible to plan the trip with the given budget. Please Increase your budget to continue."})
+
+class ActivitiesView(APIView):
+    throttle_classes = [UserRateThrottle]
+    def get(self, request):
+        trip_id = request.session.get('trip_id')
+        token = request.COOKIES.get('jwt')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated')
+
+        user = User.objects.filter(id=payload['id']).first()
+        trip = Trip.objects.get(id=trip_id)
+
+        activities =["outdoor activities",
+                    "cultural experiences",
+                    "beach and water activities",
+                    "adventure sports",
+                    "wildlife safaris",
+                    "city sightseeing",
+                    "relaxation and spa",
+                    "shopping and fashion",
+                    "historical tours",
+                    "religious and spiritual journeys",
+                    "give more options like this",
+                    "Culinary tours and experiences",
+                    "Wine tasting and vineyard tours",
+                    "Music and arts festivals",
+                    "Ecotourism and sustainable travel",
+                    "Volunteering and community service trips",
+                    "Road trips and scenic drives",
+                    "Skiing and winter sports",
+                    "Yoga and wellness retreats",
+                    "Cultural immersion and homestays",
+                    "Archaeological expeditions and ancient ruins visits",
+                    "National park exploration and hiking trips",
+                    "Train journeys and railway travel",
+                    "River cruises and sailing trips",
+                    "Photography tours and workshops",
+                    "Stargazing and astronomy experiences",
+                    "Scuba diving and snorkeling adventures",
+                    "Surfing and windsurfing lessons and experiences",
+                    "Mountain biking and cycling tours",
+                    "Horseback riding and equestrian experiences",
+                    "Glamping and luxury camping",
+                    "Sports and fitness retreats",
+                    "Literary and book-themed tours",
+                    "Ghost tours and paranormal experiences",
+                    "Film and TV location tours",]
+
+
+        prompt = f"What are the activities in {activities} that can be done in {trip.destination}? Give the most relevent 10"
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=250,
+            top_p=0.46,
+            frequency_penalty=0.2,
+            presence_penalty=0,
+            temperature=0.8,
+
+        )
+
+        result = response.choices[0].text.strip()
+        list = result.split("\n")
+        activities = [item.lstrip('1234567890. ') for item in list if item]
+        return Response({"activities":activities})
+
+
+class GPTView(APIView):
+    throttle_classes = [UserRateThrottle]
+    def post(self, request):
+        trip_id = request.session.get('trip_id')
+        travel_preferences = request.data.get('interests')
+        group_type =request.data.get('group_type ')
+        dietary_requirements = request.data.get('dietary_requirements')
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated')
+        
+
+        user = User.objects.filter(id=payload['id']).first()
+        trip = Trip.objects.get(id=trip_id)
+        num_people = trip.no_of_people
+        destination = trip.destination
+        start_date =trip.start_date
+        end_date = trip.end_date
+        currency = trip.currency
+        budget = trip.budget
+
+        today = datetime.date.today()
+        if start_date > end_date or start_date < today:
+            return Response({"itinerary": [], "places": [],"message":"Invalid date"})
+        
+
 
         
 
         # Configure the OpenAI API client
-        
 
         # Define the input parameters for the GPT-3 model
 
@@ -66,39 +204,27 @@ class GPTView(APIView):
         data = extract_data(result)
         itinerary = data['itinerary']
         places = data['places_to_visit']
-       
+
         # places = [
         #     "Old Goa",
         #     "Panaji",
-        #     "Dudhsagar Falls",
-        #     "Anjuna Beach",
-        #     "Vagator Beach",
-        #     "Baga Beach",
-        #     "Calangute Beach",
-        #     "Arambol Beach."
+
         # ]
         # itinerary = [
         #     "Day 1: Arrive in Goa, explore beaches.",
         #     "Day 2: Visit Dudhsagar Falls, enjoy sunset.",
-        #     "Day 3: Explore Old Goa, visit churches.",
-        #     "Day 4: Visit Fort Aguada, explore markets.",
-        #     "Day 5: Enjoy water sports, visit temples.",
-        #     "Day 6: Explore wildlife sanctuaries, relax on beaches.",
-        #     "Day 7: Visit spice plantations, enjoy local cuisine.",
-        #     "Day 8: Enjoy beach activities, visit local markets.",
-        #     "Day 9: Explore churches, enjoy nightlife. ",
-        #     "Day 10: Depart from Goa. "
+
         # ]
         request.session['trip'] = trip
         request.session['places'] = places
-       
+
         Itinerary.objects.create(trip=trip, itinerary=itinerary)
 
-    
-        return Response({"itinerary": itinerary,"places":places})
+        return Response({"itinerary": itinerary, "places": places,"message":"ok"})
 
 
 class PlaceView(APIView):
+    throttle_classes = [UserRateThrottle]
     def get(self, request):
         gmaps = googlemaps.Client(key=GOOGLE_PLACES_KEY)
         places = request.session.get('places')
@@ -121,14 +247,15 @@ class PlaceView(APIView):
         result = response.choices[0].text.strip()
         place_descriptions = []
         for line in result.split("\n"):
-            if line.strip(): # check if line is not empt
+            if line.strip():  # check if line is not empt
                 place_descriptions.append(line.split(":"))
-        
-        
+
         sites = []
         for i, site in enumerate(places):
             place = gmaps.places(site)
             place_id = place["results"][0]["place_id"]
+            lat = place["results"][0]["geometry"]["location"]["lat"]
+            lng = place["results"][0]["geometry"]["location"]["lng"]
             photo_reference = None
             if "photos" in place["results"][0]:
                 photo_reference = place["results"][0]["photos"][0]["photo_reference"]
@@ -136,10 +263,34 @@ class PlaceView(APIView):
                 url = None
             else:
                 url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference={photo_reference}&key={GOOGLE_PLACES_KEY}"
-            site = Site.objects.create(trip=trip, name=site, image_url=url, description=place_descriptions[i])
+            site = Site.objects.create(
+                place_id=place_id, trip=trip, name=site, image_url=url, description=place_descriptions[i], latitude=lat, longitude=lng)
             sites.append(site)
         serializer = SiteSerializer(sites, many=True)
         places = serializer.data
         return Response(places)
 
+
+
+
+
+class BookingView(APIView):
+    def get(self, request):
+        trip_id = request.session.get('trip_id')
+        trip = Trip.objects.get(id=trip_id)
+        start_date = trip.start_date.strftime("%Y-%m-%d")
+        end_date = trip.end_date.strftime("%Y-%m-%d")
+        destination = trip.destination
+        
     
+        with Booking() as bot:
+            bot.land_first_page()
+            bot.select_place_to_go(destination)
+            bot.select_date(start_date, end_date)
+            bot.occupancy()
+            bot.search()
+            hotels=bot.collect_data()
+        for hotel in hotels:
+            Hotel.objects.create(trip=trip, name=hotel.name, price=hotel.price,rating=hotel.rating, total_rating=hotel.total_rating, image_url=hotel.image_url, booking_url =hotel.booking_link, hotel_url=hotel.hotel_link)
+        
+        return Response({"hotels":hotels})

@@ -5,8 +5,9 @@ import { useContext } from 'react';
 import ModalContext from '../../utils/context/modalContext';
 import TripForm from '../forms/TripForm';
 import Alert from './Alert';
+import ErrorMessage from './ErrorMessage';
 
-const Modal = () => {
+const Modal = ({message}) => {
   const { modal, setModal } = useContext(ModalContext);
   let componentToRender;
   const modalRef = useRef();
@@ -31,7 +32,10 @@ const Modal = () => {
       componentToRender = <TripForm />;
       break;
     case 'alert':
-      componentToRender = <Alert />;
+      componentToRender = <Alert message={message}/>;
+      break;
+    case 'error':
+      componentToRender = <ErrorMessage message={message}/>;
       break;
 
     default:

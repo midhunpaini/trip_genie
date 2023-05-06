@@ -8,6 +8,10 @@ const Input = ({
   value,
   isGooglePlacesAutocomplete,
 }) => {
+  let text = 'text'
+  if (label==='Budget:'){
+     text = 'number'
+  }
   const [googlePlacesValue, setGooglePlacesValue] = useState(null);
 
   const handleChange = (e) => {
@@ -16,7 +20,7 @@ const Input = ({
 
   const handleGooglePlacesChange = (googlePlacesValue) => {
     setGooglePlacesValue(googlePlacesValue);
-    setValue(googlePlacesValue.label);
+    setValue([googlePlacesValue?.label,googlePlacesValue?.value?.place_id]);
   };
 
   if (isGooglePlacesAutocomplete) {
@@ -39,8 +43,9 @@ const Input = ({
     <div>
       <label className="block font-bold mb-2">{label}</label>
       <input
+        required
         className={style}
-        type="text"
+        type={text}
         value={value}
         onChange={handleChange}
       />

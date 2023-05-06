@@ -2,18 +2,52 @@ const registerApi = process.env.REACT_APP_GET_REGISTER_API;
 const loginApi = process.env.REACT_APP_GET_LOGIN_API;
 const logoutApi = process.env.REACT_APP_GET_LOGOUT_API;
 const tripApi = process.env.REACT_APP_TRIPFORM_API;
+const destinationApi = process.env.REACT_APP_DESTINATION_API;
 const placeApi = process.env.REACT_APP_PLACES_API;
+const hotelApi = process.env.REACT_APP_HOTELS_API;
+const activitiesApi = process.env.REACT_APP_ACTIVITIES_API;
+
+export const todayDate = () => {
+  const date = new Date();
+  const yyyy = date.getUTCFullYear();
+  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(date.getUTCDate()).padStart(2, "0");
+  const today = `${yyyy}-${mm}-${dd}`;
+  return today;
+};
+
+const validateTripForm = (data) => {
+  const { start_date, end_date } = data;
+  const startDateObj = new Date(start_date);
+  const endDateObj = new Date(end_date);
+
+  if (startDateObj > endDateObj) {
+    throw new Error("Invalid date");
+  }
+};
 
 export const logoutUser = async () => {
   try {
-    await fetch(logoutApi, {
+    const response = await fetch(logoutApi, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
+
+    if (!response.ok) {
+      throw new Error("Logout failed");
+    }
   } catch (error) {
-    console.log(error);
+    throw new Error("Logout failed");
   }
+};
+
+const handleErrors = (response) => {
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+
+  return response.json();
 };
 
 export const registerUser = async (name, email, password) => {
@@ -27,30 +61,50 @@ export const registerUser = async (name, email, password) => {
         password,
       }),
     });
-    return response;
+
+    return handleErrors(response);
   } catch (error) {
-    console.log(error);
+    throw new Error("Registration failed");
   }
 };
 
-export const loginUser = async (email, password) => {
+export const submitLogin = async (email, password) => {
+  const response = await fetch(loginApi, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail);
+  }
+  return data.name;
+};
+
+export const callHotels = async (dispatch, addAccomodation) => {
   try {
-    const response = await fetch(loginApi, {
-      method: "POST",
+    const data = await fetch(hotelApi, {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({
-        email,
-        password,
-      }),
     });
-    return response;
+    const json = await data.json();
+    dispatch(
+      addAccomodation({
+        data: json,
+        isLoaded: true,
+        isLoading: false,
+      })
+    );
   } catch (error) {
-    console.log(error);
+    dispatch(addAccomodation({ isLoading: false, isLoadingFailed: true }));
   }
 };
 
-export const callPlaces = async (dispatch, addPlace) => {
+export const callPlaces = async (dispatch, addPlace, addAccomodation) => {
   try {
     const data = await fetch(placeApi, {
       headers: { "Content-Type": "application/json" },
@@ -64,6 +118,7 @@ export const callPlaces = async (dispatch, addPlace) => {
         isLoading: false,
       })
     );
+    callHotels(dispatch, addAccomodation);
   } catch (error) {
     console.log(error);
     dispatch(addPlace({ isLoading: false, isLoadingFailed: true }));
@@ -75,8 +130,13 @@ export const handleTripFormSubmit = async (
   dispatch,
   setSubmitForm,
   addItinerary,
-  addPlace
+  addPlace,
+  addAccomodation
 ) => {
+  const error = validateTripForm(data);
+  if (error) {
+    return error;
+  }
   setSubmitForm(true);
   try {
     dispatch(addItinerary({ isLoading: true }));
@@ -94,11 +154,101 @@ export const handleTripFormSubmit = async (
         isLoading: false,
       })
     );
-    
-    callPlaces(dispatch, addPlace);
-    
+
+    callPlaces(dispatch, addPlace, addAccomodation);
   } catch (error) {
     console.log(error);
     dispatch(addItinerary({ isLoading: false, isLoadingFailed: true }));
-  } 
+  }
+};
+
+export const extractDataForMap = (places) => {
+  const waypoints = [];
+  const markers = [];
+  const len = places.length - 1;
+  for (let i = 1; i < len; i++) {
+    let obj = {
+      location: {
+        lat: Number(places[i].latitude),
+        lng: Number(places[i].longitude),
+      },
+      stopover: true,
+    };
+    waypoints.push(obj);
+  }
+  for (let i = 0; i <= len; i++) {
+    let obj = {
+      position: {
+        lat: Number(places[i].latitude),
+        lng: Number(places[i].longitude),
+      },
+      title: Number(places[i].name),
+    };
+    markers.push(obj);
+  }
+
+  const origin = {
+    lat: Number(places[0].latitude),
+    lng: Number(places[0].longitude),
+  };
+  const destination = {
+    lat: Number(places[len].latitude),
+    lng: Number(places[len].longitude),
+  };
+
+  return [waypoints, markers, origin, destination];
+};
+
+export const handlesetDestinationSubmit = async (data, setSubmitForm) => {
+  const error = validateTripForm(data);
+  if (error) {
+    return error;
+  }
+  try {
+    const response = await fetch(destinationApi, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+    const json = await response.json();
+    if (json.result === true) {
+      setSubmitForm(true);
+      setTripId(json.trip);
+    } else {
+      return json;
+    }
+    console.log(json);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const setTravelPreferences = async () => {
+  console.log(activitiesApi);
+  try {
+    console.log("inside helper");
+    const data = await fetch(activitiesApi, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    const json = await data.json();
+    console.log(json, "))))))))))))))))))))");
+    return json.activities;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const groupOptions = (person, setGroupOption) => {
+  person = Number(person);
+  if (person === 2) {
+    setGroupOption(["Couple"]);
+  } else if (person === 1) {
+    setGroupOption(["Solo"]);
+  } else if (person > 2) {
+    setGroupOption(["Friends", "Family", "Business", "Other"]);
+  }else{
+    setGroupOption([])
+  }
 };

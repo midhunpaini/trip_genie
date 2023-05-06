@@ -16,8 +16,10 @@ import { logoutUser } from "./utils/helper";
 import { Provider } from "react-redux";
 import store from "./utils/redux/store";
 import Testing from "./pages/Testing";
+import GroupOptionContext from "./utils/context/groupOptionContext";
 
 const App = () => {
+  const [groupOption, setGroupOption] = useState(["Friends","Family","Couple","Solo", "Business","Other",]);
   const [modal, setModal] = useState("hide");
   const user = useUser();
   const appRouter = createBrowserRouter([
@@ -49,11 +51,17 @@ const App = () => {
 
   return (
     <>
+    <GroupOptionContext.Provider
+    value={{
+      setGroupOption:setGroupOption,
+      groupOption:groupOption
+    }}>
       <UserContext.Provider
         value={{
           user: user.user,
           setUser: user.setUser,
           logout: logoutUser,
+          loading: user.loading,
         }}
       >
         <ModalContext.Provider
@@ -65,6 +73,7 @@ const App = () => {
           <RouterProvider router={appRouter} />
         </ModalContext.Provider>
       </UserContext.Provider>
+      </GroupOptionContext.Provider>
     </>
   );
 };

@@ -3,7 +3,7 @@ import addImage from "../../../assets/images/add.png";
 const AddTrip = ({setShowForm}) => {
 
   return (
-    <div className="mt-10 sm:mt-28 bg-gray-50">
+    <div className=" bg-gray-50">
       <h1 className="text-2xl sm:text-3xl text-center mb-4">Add Trip</h1>
       <button
         onClick={() => {

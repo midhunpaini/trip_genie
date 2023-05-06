@@ -4,6 +4,7 @@ import placeSlice from "./placeSlice";
 import accommodationSlice from "./accommodationSlice";
 import localDelicacySlice from "./localDelicacySlice";
 import travelOptionSlice from "./travelOptionSlice";
+import destinationSlice from "./destinationSlice";
 
 const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
     place: placeSlice,
     accommodation: accommodationSlice,
     localDelicacy:localDelicacySlice,
-    travelOption:travelOptionSlice
+    travelOption:travelOptionSlice,
+    destination:destinationSlice,
   },
 });
 

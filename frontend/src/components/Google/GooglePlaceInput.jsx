@@ -3,6 +3,7 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete"
 const GooglePlaceInput = () => {
   const [value, setValue] = useState()
   const key = process.env.REACT_APP_GOOGLE_PLACES_KEY
+  
   return (
     <div>
         <GooglePlacesAutocomplete

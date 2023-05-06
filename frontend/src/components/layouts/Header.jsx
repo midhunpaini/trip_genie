@@ -8,7 +8,7 @@ const Header = () => {
   const { setModal } = useContext(ModalContext);
   const handleLogout = async () => {
     await logout();
-    setUser("");
+    setUser(null);
   };
   return (
     <header className="bg-[#a57c48] h-28 text-white fixed top-0 left-0 w-full z-50 px-4 py-2 flex justify-between items-center">

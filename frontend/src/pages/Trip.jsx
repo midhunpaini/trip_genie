@@ -1,16 +1,19 @@
 import { useState, useContext, useEffect } from "react";
 import Header from "../components/layouts/Header";
 import AddTrip from "../components/ui/buttons/AddTrip";
-import TripSearchResult from "../components/trip/TripSearchResult";
-import TripForm from "../components/forms/TripForm";
 import { Navigate } from "react-router-dom";
 import UserContext from "../utils/context/userContext";
 import Footer from "../components/layouts/Footer";
-
+import SetDestination from "../components/forms/SetDestination";
+import SetPreferences from "../components/forms/SetPreferences";
+import GroupOptionContext from "../utils/context/groupOptionContext";
 const Trip = () => {
   const [submitForm, setSubmitForm] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const { user } = useContext(UserContext);
+
+  
+  const { user, loading } = useContext(UserContext);
+  const {groupOption} = useContext(GroupOptionContext);
 
   useEffect(() => {
     const setHeight = () => {
@@ -27,6 +30,10 @@ const Trip = () => {
     };
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (!user) {
     return <Navigate to="/" />;
   }
@@ -34,14 +41,13 @@ const Trip = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <div className="flex-grow">
+      <div className="flex-grow mt-[10rem]">
         {!submitForm ? <AddTrip setShowForm={setShowForm} /> : null}
         {showForm && !submitForm ? (
-          <TripForm setSubmitForm={setSubmitForm} />
+          <SetDestination  setSubmitForm={setSubmitForm} />
         ) : null}
-        {submitForm ? <TripSearchResult tripSubmit={submitForm} /> : null}
+        {submitForm ? <SetPreferences groupOption={groupOption} /> : null}
       </div>
-
       <Footer />
     </div>
   );

@@ -10,6 +10,7 @@ const Select = ({label,setValue,options,style,value}) => {
               {label}
             </label>
             <select
+              required
               className={style}
               value={value}
               onChange={(e) => {handleChange(e)}}
