@@ -4,10 +4,10 @@ import Itinerary from './Itinerary'
 import LocalDelicacies from'./LocalDelicacies'
 import TravelOptions from './TravelOptions'
 import { useSelector } from 'react-redux'
-import SaveTrip from '../ui/buttons/SaveTrip'
-import Map from '../Google/GoogleMap'
-import HotelCarousel from '../ui/HotelCarousel'
-import PlacesCarousal from '../ui/PlacesCarousal'
+import SaveTrip from '../buttons/SaveTrip'
+import Map from '../../Google/GoogleMap'
+import Carousel from './Carousel'
+import PlacesCarousal from './PlacesCarousal'
 
 
 const TripSearchResult = () => {
@@ -19,13 +19,14 @@ const TripSearchResult = () => {
 
 
   return (
-    <div className='mt-32'>
+    <div className='mt-32 border'>
         <TripResultButton datas={itinerary} sectionName='Itinerary' component= { <Itinerary/> } />
         <TripResultButton datas={places_to_visit} sectionName ='Places to Visit' component={ <PlacesCarousal places = {places_to_visit?.data}/> }/>
         <TripResultButton datas={places_to_visit} sectionName='Map' component= { <Map places={places_to_visit?.data} /> } />
-        <TripResultButton datas={accommodation} sectionName ='Accommodation Options' component={ <HotelCarousel hotels={accommodation?.data?.hotels}/> } />
-        <TripResultButton datas={local_delicacies} sectionName ='Local Delicacies' component={ <LocalDelicacies /> }/>
-        <TripResultButton datas={travel_options} sectionName ='Travel Options' component={<TravelOptions /> }/>
+        <TripResultButton datas={local_delicacies} sectionName ='Local Delicacies' component={ <Carousel data={local_delicacies.data?.delicacies} card='cusine'/> }/>
+        <TripResultButton datas={accommodation} sectionName ='Accommodation Options' component={ <Carousel data={accommodation?.data?.hotels} card='hotel'/> } />
+        <TripResultButton datas={travel_options} sectionName ='Travel Options' component={<TravelOptions options={travel_options.data?.travel_options}/> }/>
+       
         <SaveTrip/>
     </div>
   )

@@ -7,6 +7,7 @@ import Footer from "../components/layouts/Footer";
 import SetDestination from "../components/forms/SetDestination";
 import SetPreferences from "../components/forms/SetPreferences";
 import GroupOptionContext from "../utils/context/groupOptionContext";
+import TripSearchResult from "../components/ui/trip/TripSearchResult";
 const Trip = () => {
   const [submitForm, setSubmitForm] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -41,6 +42,8 @@ const Trip = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
+  
+      
       <div className="flex-grow mt-[10rem]">
         {!submitForm ? <AddTrip setShowForm={setShowForm} /> : null}
         {showForm && !submitForm ? (

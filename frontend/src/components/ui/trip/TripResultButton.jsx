@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import openImage from "../../assets/images/down.svg";
-import closeImage from "../../assets/images/right.svg";
-import loadingImage from "../../assets/images/loading.png";
-import successImage from "../../assets/images/success.png";
-import failureImage from "../../assets/images/failed.png";
+import openImage from "../../../assets/images/down.svg";
+import closeImage from "../../../assets/images/right.svg";
+import loadingImage from "../../../assets/images/loading.png";
+import successImage from "../../../assets/images/success.png";
+import failureImage from "../../../assets/images/failed.png";
+
 
 
 const TripResultButton = ({ datas, sectionName, component}) => {
@@ -13,6 +14,7 @@ const TripResultButton = ({ datas, sectionName, component}) => {
   const [isOpen, setIsOpen] = useState("");
   const data = datas?.data
   console.log(data)
+  console.log(isFailure,isSuccess,isLoading,isOpen)
   function handleClick() {
     if (isSuccess) {
       setIsOpen(!isOpen);

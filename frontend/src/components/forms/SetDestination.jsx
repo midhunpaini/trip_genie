@@ -12,6 +12,8 @@ import Modal from "../ui/Modal";
 import ModalContext from "../../utils/context/modalContext";
 import Loader from "../ui/Loader";
 import GroupOptionContext from "../../utils/context/groupOptionContext";
+import { addAccomodation } from "../../utils/redux/accommodationSlice";
+
 
 const SetDestination = ({setSubmitForm}) => {
   const today = todayDate()
@@ -26,6 +28,7 @@ const SetDestination = ({setSubmitForm}) => {
   const [num_persons, setNumPersons] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message,setMessage]=useState({});
+  const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
     
@@ -45,6 +48,8 @@ const SetDestination = ({setSubmitForm}) => {
     const errorMessage = await handlesetDestinationSubmit(
       data,
       setSubmitForm,
+      dispatch,
+      addAccomodation
     );
 
     if (errorMessage === "Invalid date") {

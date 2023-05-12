@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import NewCard from '../components/ui/NewCard'
+import TravelOptions from '../components/ui/trip/TravelOptions'
 
 
 
@@ -10,8 +10,7 @@ const Testing = () => {
   const key = process.env.REACT_APP_GOOGLE_PLACES_KEY
   return (
     <div>
-
-<NewCard/>
+     <TravelOptions/>
     </div>
   )
 }

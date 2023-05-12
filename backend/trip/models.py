@@ -9,9 +9,9 @@ class Hotel(models.Model):
     price = models.CharField(max_length=100, null=True, blank=True)
     rating = models.CharField(max_length=100, null=True, blank=True)
     total_rating = models.CharField(max_length=100, null=True, blank=True)
-    image_url = models.URLField()
-    booking_url = models.CharField(max_length=100, null=True, blank=True)
-    hotel_url = models.CharField(max_length=100, null=True, blank=True)
+    image_url = models.TextField(max_length=2000, null=True, blank=True)
+    booking_url = models.TextField(max_length=2000, null=True, blank=True)
+    hotel_url = models.TextField(max_length=2000, null=True, blank=True)
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
     
     
@@ -22,8 +22,9 @@ class Itinerary(models.Model):
     
 class LocalDelicacy(models.Model):
     name = models.CharField(max_length=250)
-    image_url = models.URLField()
-    site = models.ForeignKey('Site', on_delete=models.CASCADE)
+    image_url = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
     
     
 class PurchaseTrip(models.Model):
@@ -39,7 +40,7 @@ class Site(models.Model):
     latitude = models.CharField(max_length=100,null=True, blank=True)
     longitude = models.CharField(max_length=100,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    image_url = models.URLField(null=True, blank=True, max_length=500)
+    image_url = models.TextField(null=True, blank=True, max_length=2000)
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
 
     
@@ -57,6 +58,7 @@ class SubscriptionType(models.Model):
 class TravelPreference(models.Model):
     type = models.CharField(max_length=100)
     cost = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
     
     

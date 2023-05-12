@@ -12,7 +12,8 @@ from . helpers import *
 from . serializers import *
 openai.api_key = GPT_KEY
 from rest_framework.throttling import UserRateThrottle
-from . booking import Booking
+from .scrap.booking import Booking
+from .scrap.delicacy import Delicacy
 from datetime import date
 
 
@@ -179,9 +180,6 @@ class GPTView(APIView):
             return Response({"itinerary": [], "places": [],"message":"Invalid date"})
         
 
-
-        
-
         # Configure the OpenAI API client
 
         # Define the input parameters for the GPT-3 model
@@ -205,16 +203,7 @@ class GPTView(APIView):
         itinerary = data['itinerary']
         places = data['places_to_visit']
 
-        # places = [
-        #     "Old Goa",
-        #     "Panaji",
-
-        # ]
-        # itinerary = [
-        #     "Day 1: Arrive in Goa, explore beaches.",
-        #     "Day 2: Visit Dudhsagar Falls, enjoy sunset.",
-
-        # ]
+     
         request.session['trip'] = trip
         request.session['places'] = places
 
@@ -271,10 +260,8 @@ class PlaceView(APIView):
         return Response(places)
 
 
-
-
-
 class BookingView(APIView):
+    throttle_classes = [UserRateThrottle]
     def get(self, request):
         trip_id = request.session.get('trip_id')
         trip = Trip.objects.get(id=trip_id)
@@ -290,7 +277,67 @@ class BookingView(APIView):
             bot.occupancy()
             bot.search()
             hotels=bot.collect_data()
+        
         for hotel in hotels:
-            Hotel.objects.create(trip=trip, name=hotel.name, price=hotel.price,rating=hotel.rating, total_rating=hotel.total_rating, image_url=hotel.image_url, booking_url =hotel.booking_link, hotel_url=hotel.hotel_link)
+            Hotel.objects.create(trip=trip, name=hotel['name'], price=hotel['price'],rating=hotel['rating'], total_rating=hotel['total_rating'], image_url=hotel['image_url'], booking_url = hotel['booking_link'], hotel_url= hotel['hotel_link'])
         
         return Response({"hotels":hotels})
+
+
+class LocalDelicacy(APIView):
+    throttle_classes = [UserRateThrottle]
+    def get(self, request):
+        trip_id = request.session.get('trip_id')
+        trip = Trip.objects.get(id=trip_id)
+        destination = trip.destination
+
+        prompt = f"Suggest 5 Must try local food(delicacy) in {destination}"
+
+        # Call the GPT-3 model and receive the response
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=750,
+            top_p=0.46,
+            frequency_penalty=0.2,
+            presence_penalty=0,
+            temperature=0.8,
+        )
+        result = response.choices[0].text.strip()
+  
+        delicacies = extract_delicacy(result)
+
+        return Response({'delicacies':delicacies})
+    
+
+class TravelOptionsView(APIView):
+    throttle_classes = [UserRateThrottle]
+    
+    def get(self, request):
+        trip_id = request.session.get('trip_id')
+        trip = Trip.objects.get(id=trip_id)
+        destination = trip.destination
+        current_location = trip.current_location
+        currency  = trip.currency
+
+        prompt = f"What are the travel options available from {current_location} to {destination}."
+
+        # Call the GPT-3 model and receive the response
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt = prompt,
+            max_tokens=650,
+            top_p=0.46,
+            frequency_penalty=0.2,
+            presence_penalty=0,
+            temperature=0.6,
+        )
+        result = response.choices[0].text.strip()
+        
+        travel_options = extract_travel_options(result)
+        print(travel_options)
+      
+      
+        return Response({'travel_options':travel_options})
+
+    

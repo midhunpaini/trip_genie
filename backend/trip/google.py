@@ -22,9 +22,4 @@ places_result = gmaps.places_nearby(
     radius=radius,
     type=place_type
 )
-print(places_result)
-# Print the name and address of each place
-for place in places_result['results']:
-    print('Name:', place['name'])
-    print('Address:', place['vicinity'])
-    print()
+

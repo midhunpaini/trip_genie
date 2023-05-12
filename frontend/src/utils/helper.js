@@ -6,6 +6,8 @@ const destinationApi = process.env.REACT_APP_DESTINATION_API;
 const placeApi = process.env.REACT_APP_PLACES_API;
 const hotelApi = process.env.REACT_APP_HOTELS_API;
 const activitiesApi = process.env.REACT_APP_ACTIVITIES_API;
+const delicacyApi = process.env.REACT_APP_DELICACY_API;
+const travelOptionApi = process.env.REACT_APP_TRAVEL_OPTIONS_API;
 
 export const todayDate = () => {
   const date = new Date();
@@ -86,12 +88,14 @@ export const submitLogin = async (email, password) => {
 };
 
 export const callHotels = async (dispatch, addAccomodation) => {
+  console.log('calling hotel')
   try {
     const data = await fetch(hotelApi, {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
     const json = await data.json();
+    console.log(json)
     dispatch(
       addAccomodation({
         data: json,
@@ -104,7 +108,47 @@ export const callHotels = async (dispatch, addAccomodation) => {
   }
 };
 
-export const callPlaces = async (dispatch, addPlace, addAccomodation) => {
+export const callDelicacy = async (dispatch, addLocalDelicacy) => {
+  console.log('calling delicacy')
+  try {
+    const data = await fetch(delicacyApi, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    const json = await data.json();
+    dispatch(
+      addLocalDelicacy({
+        data: json,
+        isLoaded: true,
+        isLoading: false,
+      })
+    );
+  } catch (error) {
+    dispatch(addLocalDelicacy({ isLoading: false, isLoadingFailed: true }));
+  }
+};
+
+export const callTravelOptions = async (dispatch, addTravelOption, addLocalDelicacy) => {
+  try {
+    const data = await fetch(travelOptionApi, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    const json = await data.json();
+    dispatch(
+      addTravelOption({
+        data: json,
+        isLoaded: true,
+        isLoading: false,
+      })
+    );
+    callDelicacy(dispatch, addLocalDelicacy)
+  } catch (error) {
+    dispatch(addTravelOption({ isLoading: false, isLoadingFailed: true }));
+  }
+};
+
+export const callPlaces = async (dispatch, addPlace, addTravelOption, addLocalDelicacy) => {
   try {
     const data = await fetch(placeApi, {
       headers: { "Content-Type": "application/json" },
@@ -118,7 +162,7 @@ export const callPlaces = async (dispatch, addPlace, addAccomodation) => {
         isLoading: false,
       })
     );
-    callHotels(dispatch, addAccomodation);
+      callTravelOptions(dispatch, addTravelOption, addLocalDelicacy)
   } catch (error) {
     console.log(error);
     dispatch(addPlace({ isLoading: false, isLoadingFailed: true }));
@@ -131,7 +175,9 @@ export const handleTripFormSubmit = async (
   setSubmitForm,
   addItinerary,
   addPlace,
-  addAccomodation
+  addTravelOption,
+  addLocalDelicacy,
+  
 ) => {
   const error = validateTripForm(data);
   if (error) {
@@ -154,8 +200,7 @@ export const handleTripFormSubmit = async (
         isLoading: false,
       })
     );
-
-    callPlaces(dispatch, addPlace, addAccomodation);
+    callPlaces(dispatch, addPlace,addTravelOption,addLocalDelicacy);
   } catch (error) {
     console.log(error);
     dispatch(addItinerary({ isLoading: false, isLoadingFailed: true }));
@@ -199,7 +244,12 @@ export const extractDataForMap = (places) => {
   return [waypoints, markers, origin, destination];
 };
 
-export const handlesetDestinationSubmit = async (data, setSubmitForm) => {
+export const handlesetDestinationSubmit = async (
+  data,
+  setSubmitForm,
+  dispatch,
+  addAccomodation,
+) => {
   const error = validateTripForm(data);
   if (error) {
     return error;
@@ -214,7 +264,7 @@ export const handlesetDestinationSubmit = async (data, setSubmitForm) => {
     const json = await response.json();
     if (json.result === true) {
       setSubmitForm(true);
-      setTripId(json.trip);
+      callHotels(dispatch,addAccomodation);
     } else {
       return json;
     }
@@ -225,7 +275,6 @@ export const handlesetDestinationSubmit = async (data, setSubmitForm) => {
 };
 
 export const setTravelPreferences = async () => {
-  console.log(activitiesApi);
   try {
     console.log("inside helper");
     const data = await fetch(activitiesApi, {
@@ -233,7 +282,6 @@ export const setTravelPreferences = async () => {
       credentials: "include",
     });
     const json = await data.json();
-    console.log(json, "))))))))))))))))))))");
     return json.activities;
   } catch (error) {
     return [];
@@ -248,7 +296,7 @@ export const groupOptions = (person, setGroupOption) => {
     setGroupOption(["Solo"]);
   } else if (person > 2) {
     setGroupOption(["Friends", "Family", "Business", "Other"]);
-  }else{
-    setGroupOption([])
+  } else {
+    setGroupOption([]);
   }
 };

@@ -12,7 +12,7 @@ from rest_framework.throttling import UserRateThrottle
 
 class RegisterView(APIView):
     throttle_classes = [UserRateThrottle]
-    print('register')
+  
     def post(self,request):
         serializer = UserSerializers(data=request.data)
         if serializer.is_valid():

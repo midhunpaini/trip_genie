@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 const = 'https://www.booking.com/'
@@ -81,26 +82,32 @@ class Booking(webdriver.Chrome):
     
 
     def collect_data(self):
-        hotels = self.find_element(By.ID, 'search_results_table').find_elements(By.CSS_SELECTOR, 'div[class="a826ba81c4 fe821aea6c fa2f36ad22 afd256fc79 d08f526e0d ed11e24d01 ef9845d4b3 da89aeb942"]')
         hotels_data = []
-
-        for hotel in hotels:
-            data = {}
-            name = hotel.find_element(By.CSS_SELECTOR, 'div[data-testid="title"]').text
-            image = hotel.find_element(By.CSS_SELECTOR, 'img[data-testid="image"]').get_attribute('src')
-            rating = hotel.find_element(By.CSS_SELECTOR, 'div[class="b5cd09854e d10a6220b4"]').text
-            price = hotel.find_element(By.CSS_SELECTOR,'span[data-testid="price-and-discounted-price"]').text
-            total_rating = hotel.find_element(By.CSS_SELECTOR, 'div[class="d8eab2cf7f c90c0a70d3 db63693c62"]').text
-            hotel_detail = hotel.find_element(By.CSS_SELECTOR, 'a[data-testid="review-score-link"]').get_attribute('href')
-            booking_link = hotel.find_element(By.CSS_SELECTOR, 'a[data-testid="availability-cta-btn"]').get_attribute('href')
-            data['name'] = name
-            data['image_url'] = image
-            data['rating'] = rating
-            data['price'] = price
-            data['total_ratings'] = total_rating
-            data['hotel_link'] = hotel_detail
-            data['booking_link'] = booking_link
-            hotels_data.append(data)
+        try:
+            hotels = self.find_element(By.ID, 'search_results_table').find_elements(By.CSS_SELECTOR, 'div[class="a826ba81c4 fe821aea6c fa2f36ad22 afd256fc79 d08f526e0d ed11e24d01 ef9845d4b3 da89aeb942"]')
+            for hotel in hotels:
+                data = {}
+                try:
+                    name = hotel.find_element(By.CSS_SELECTOR, 'div[data-testid="title"]').text
+                    image = hotel.find_element(By.CSS_SELECTOR, 'img[data-testid="image"]').get_attribute('src')
+                    rating = hotel.find_element(By.CSS_SELECTOR, 'div[class="b5cd09854e d10a6220b4"]').text
+                    total_rating = hotel.find_element(By.CSS_SELECTOR, 'div[class="d8eab2cf7f c90c0a70d3 db63693c62"]').text
+                    price = hotel.find_element(By.CSS_SELECTOR,'span[data-testid="price-and-discounted-price"]').text
+                    hotel_detail = hotel.find_element(By.CSS_SELECTOR, 'a[data-testid="review-score-link"]').get_attribute('href')
+                    booking_link = hotel.find_element(By.CSS_SELECTOR, 'a[data-testid="availability-cta-btn"]').get_attribute('href')
+                    data['name'] = name
+                    data['image_url'] = image
+                    data['rating'] = rating
+                    data['price'] = price
+                    data['total_rating'] = total_rating
+                    data['hotel_link'] = hotel_detail
+                    data['booking_link'] = booking_link
+                    hotels_data.append(data)
+                except NoSuchElementException:
+                    print("Element not found")
+        except NoSuchElementException:
+            print("Search results table not found")
 
         return hotels_data
+
 

@@ -2,15 +2,16 @@ import React from 'react';
 import {Link} from "react-router-dom"
 
 
-const HotelCard = ({ pictureUrl, price, rating, name, totalRating, bookingLink, hotelLink }) => {
+const HotelCard = ({ hotel }) => {
+  console.log(hotel.hotel_url)
   return (
     
     <div className="wrapper m-4 bg-gray-400 antialiased text-gray-900">
         
       <div>
-        <Link to={hotelLink} target="_blank">
+        <Link to={hotel.hotel_link} target="_blank">
         <img
-          src={pictureUrl}
+          src={hotel.image_url}
           alt="random image"
           className="w-full object-cover object-center rounded-lg shadow-md"
         />
@@ -20,26 +21,26 @@ const HotelCard = ({ pictureUrl, price, rating, name, totalRating, bookingLink, 
             <div className="flex items-baseline">
               <span >
                 
-                <button className="bg-teal-200 text-teal-800 text-xs px-2 inline-block rounded-full uppercase font-semibold tracking-wide"><Link to={bookingLink} target='_blank'>Book Now</Link></button>
+                <button className="bg-teal-200 text-teal-800 text-xs px-2 inline-block rounded-full uppercase font-semibold tracking-wide"><Link to={hotel.booking_link} target='_blank'>Book Now</Link></button>
                 
               </span>
             
             </div>
 
             <p className="mt-1 font-semibold uppercase  truncate">
-              {name}
+              {hotel.name}
             </p>
 
             <div className="mt-1">
-              {price}
+              {hotel.price}
               <span className="text-gray-600 text-sm"></span>
             </div>
             <div className="mt-4">
               <span className="text-teal-600 text-md font-semibold">
-                {rating} ratings
+                {hotel.rating} ratings
               </span>
               <span className="text-sm text-gray-600">
-                (based on {totalRating})
+                (based on {hotel.total_rating})
               </span>
             </div>
           </div>

@@ -5,12 +5,13 @@ import Select from "../ui/Select";
 import CheckBox from "../ui/CheckBox";
 import { handleTripFormSubmit, setTravelPreferences } from "../../utils/helper";
 import { addPlace } from "../../utils/redux/placeSlice";
-import { addAccomodation } from "../../utils/redux/accommodationSlice";
 import { ToastContainer, toast } from "react-toastify";
-import TripSearchResult from "../trip/TripSearchResult";
+import TripSearchResult from "../ui/trip/TripSearchResult";
 import "react-toastify/dist/ReactToastify.css";
 import PreferenceShimmer from "../ui/PreferenceShimmer";
 import GroupOptionContext from "../../utils/context/groupOptionContext";
+import { addTravelOption } from "../../utils/redux/travelOptionSlice";
+import { addLocalDelicacy } from "../../utils/redux/localDelicacySlice"
 
 const SetPreference = () => {
   const {groupOption} = useContext(GroupOptionContext)
@@ -46,7 +47,8 @@ const SetPreference = () => {
       setSubmitForm,
       addItinerary,
       addPlace,
-      addAccomodation
+      addTravelOption, 
+      addLocalDelicacy,
     );
     console.log(errorMessage);
     if (errorMessage === "Invalid date") {
@@ -57,7 +59,7 @@ const SetPreference = () => {
     
     <div className="bg-gray-50">
       {!loading?submitForm ? (
-        <TripSearchResult tripSubmit={submitForm} />
+        <TripSearchResult />
       ) : (
         <>
           <ToastContainer />
