@@ -59,7 +59,7 @@ const SetPreference = () => {
     
     <div className="bg-gray-50">
       {!loading?submitForm ? (
-        <TripSearchResult />
+        <TripSearchResult/>
       ) : (
         <>
           <ToastContainer />

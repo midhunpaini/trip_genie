@@ -12,19 +12,19 @@ class Hotel(models.Model):
     image_url = models.TextField(max_length=2000, null=True, blank=True)
     booking_url = models.TextField(max_length=2000, null=True, blank=True)
     hotel_url = models.TextField(max_length=2000, null=True, blank=True)
-    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, related_name='hotels')
     
     
 class Itinerary(models.Model):
     itinerary = ArrayField(models.CharField(max_length=500), blank=True, default=list)
-    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, related_name='itineraries')
     
     
 class LocalDelicacy(models.Model):
     name = models.CharField(max_length=250)
     image_url = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, related_name='local_delicacy')
     
     
 class PurchaseTrip(models.Model):
@@ -41,7 +41,7 @@ class Site(models.Model):
     longitude = models.CharField(max_length=100,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image_url = models.TextField(null=True, blank=True, max_length=2000)
-    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, related_name='sites')
 
     
 class Subscription(models.Model):
@@ -49,17 +49,19 @@ class Subscription(models.Model):
     subscription_date = models.DateField(default=timezone.now)
     end_date = models.DateField()
     type = models.ForeignKey('SubscriptionType', on_delete=models.CASCADE)
+
+
     
     
 class SubscriptionType(models.Model):
     name = models.CharField(max_length=100)
     
     
-class TravelPreference(models.Model):
-    type = models.CharField(max_length=100)
-    cost = models.IntegerField()
+class TravelOption(models.Model):
+    option = models.CharField(max_length=100, null=True, blank=True)
+    cost = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, related_name='travel_options')
     
     
 class Trip(models.Model):
@@ -72,5 +74,6 @@ class Trip(models.Model):
     no_of_people = models.IntegerField(null=True,blank=True)
     budget = models.IntegerField(null=True,blank=True)
     currency = models.CharField(max_length=200, null=True,blank=True)
+    is_save = models.BooleanField(default=False)
     
     

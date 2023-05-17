@@ -44,12 +44,12 @@ const Trip = () => {
       <Header />
   
       
-      <div className="flex-grow mt-[10rem]">
+      <div className="flex-grow mt-[6.1rem]">
         {!submitForm ? <AddTrip setShowForm={setShowForm} /> : null}
         {showForm && !submitForm ? (
           <SetDestination  setSubmitForm={setSubmitForm} />
         ) : null}
-        {submitForm ? <SetPreferences groupOption={groupOption} /> : null}
+        {submitForm ? <SetPreferences groupOption={groupOption} setForm={setSubmitForm}/> : null}
       </div>
       <Footer />
     </div>

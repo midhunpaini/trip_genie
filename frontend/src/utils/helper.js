@@ -81,6 +81,7 @@ export const submitLogin = async (email, password) => {
     }),
   });
   const data = await response.json();
+
   if (!response.ok) {
     throw new Error(data.detail);
   }
@@ -88,14 +89,14 @@ export const submitLogin = async (email, password) => {
 };
 
 export const callHotels = async (dispatch, addAccomodation) => {
-  console.log('calling hotel')
+  console.log("calling hotel");
   try {
     const data = await fetch(hotelApi, {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
     const json = await data.json();
-    console.log(json)
+    console.log(json);
     dispatch(
       addAccomodation({
         data: json,
@@ -109,7 +110,7 @@ export const callHotels = async (dispatch, addAccomodation) => {
 };
 
 export const callDelicacy = async (dispatch, addLocalDelicacy) => {
-  console.log('calling delicacy')
+  console.log("calling delicacy");
   try {
     const data = await fetch(delicacyApi, {
       headers: { "Content-Type": "application/json" },
@@ -128,7 +129,11 @@ export const callDelicacy = async (dispatch, addLocalDelicacy) => {
   }
 };
 
-export const callTravelOptions = async (dispatch, addTravelOption, addLocalDelicacy) => {
+export const callTravelOptions = async (
+  dispatch,
+  addTravelOption,
+  addLocalDelicacy
+) => {
   try {
     const data = await fetch(travelOptionApi, {
       headers: { "Content-Type": "application/json" },
@@ -142,13 +147,18 @@ export const callTravelOptions = async (dispatch, addTravelOption, addLocalDelic
         isLoading: false,
       })
     );
-    callDelicacy(dispatch, addLocalDelicacy)
+    callDelicacy(dispatch, addLocalDelicacy);
   } catch (error) {
     dispatch(addTravelOption({ isLoading: false, isLoadingFailed: true }));
   }
 };
 
-export const callPlaces = async (dispatch, addPlace, addTravelOption, addLocalDelicacy) => {
+export const callPlaces = async (
+  dispatch,
+  addPlace,
+  addTravelOption,
+  addLocalDelicacy
+) => {
   try {
     const data = await fetch(placeApi, {
       headers: { "Content-Type": "application/json" },
@@ -162,7 +172,7 @@ export const callPlaces = async (dispatch, addPlace, addTravelOption, addLocalDe
         isLoading: false,
       })
     );
-      callTravelOptions(dispatch, addTravelOption, addLocalDelicacy)
+    callTravelOptions(dispatch, addTravelOption, addLocalDelicacy);
   } catch (error) {
     console.log(error);
     dispatch(addPlace({ isLoading: false, isLoadingFailed: true }));
@@ -176,8 +186,7 @@ export const handleTripFormSubmit = async (
   addItinerary,
   addPlace,
   addTravelOption,
-  addLocalDelicacy,
-  
+  addLocalDelicacy
 ) => {
   const error = validateTripForm(data);
   if (error) {
@@ -200,7 +209,7 @@ export const handleTripFormSubmit = async (
         isLoading: false,
       })
     );
-    callPlaces(dispatch, addPlace,addTravelOption,addLocalDelicacy);
+    callPlaces(dispatch, addPlace, addTravelOption, addLocalDelicacy);
   } catch (error) {
     console.log(error);
     dispatch(addItinerary({ isLoading: false, isLoadingFailed: true }));
@@ -248,7 +257,7 @@ export const handlesetDestinationSubmit = async (
   data,
   setSubmitForm,
   dispatch,
-  addAccomodation,
+  addAccomodation
 ) => {
   const error = validateTripForm(data);
   if (error) {
@@ -264,7 +273,7 @@ export const handlesetDestinationSubmit = async (
     const json = await response.json();
     if (json.result === true) {
       setSubmitForm(true);
-      callHotels(dispatch,addAccomodation);
+      callHotels(dispatch, addAccomodation);
     } else {
       return json;
     }
@@ -299,4 +308,19 @@ export const groupOptions = (person, setGroupOption) => {
   } else {
     setGroupOption([]);
   }
+};
+
+export const callUserTrip = async () => {
+  try {
+    const data = await fetch(process.env.REACT_APP_USER_TRIPS_API, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    const json = await data.json();
+    return json
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return []
+  }
+
 };

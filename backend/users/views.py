@@ -6,6 +6,9 @@ from .serializer import UserSerializers
 import jwt, datetime
 from trip_genie.settings import JWT_CODE
 from rest_framework.throttling import UserRateThrottle
+from django.db.models import Prefetch
+from trip.models import *
+from trip.serializers import *
 
 
 
@@ -63,12 +66,14 @@ class UserViews(APIView):
         
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            print(payload)
+            print(token)
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated')
         
         user = User.objects.filter(id=payload['id']).first()
         
- 
+        print('user calling')
         serializer = UserSerializers(user)
         return Response(serializer.data)
     
@@ -81,3 +86,62 @@ class LogoutView(APIView):
             'message':'success'
         }
         return response
+    
+
+
+
+class UserTripView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated')
+
+        user = User.objects.filter(id=payload['id']).first()
+
+        trips = Trip.objects.filter(user=user, is_save=True).prefetch_related(
+            Prefetch('local_delicacy', queryset=LocalDelicacy.objects.all()),
+            Prefetch('itineraries', queryset=Itinerary.objects.all()),
+            Prefetch('sites', queryset=Site.objects.all()),
+            Prefetch('travel_options', queryset=TravelOption.objects.all()),
+            Prefetch('hotels', queryset=Hotel.objects.all()),
+        )
+
+        serializer = TripSerializer(trips, many=True)
+        data = serializer.data
+
+  
+        for i, trip_data in enumerate(data):
+            itinerary = trips[i].itineraries.all()
+            sites = trips[i].sites.all()
+            hotels = trips[i].hotels.all()
+            local_delicacy = trips[i].local_delicacy.all()
+            travel_options = trips[i].travel_options.all()
+            itinerary_serializer = ItinerarySerializer(itinerary, many=True)
+            sites_serializer = SiteSerializer(sites, many=True)
+            hotel_serializer = HotelSerializer(hotels, many=True)
+            local_delicacy_serializer = LocalDelicacySerializer(local_delicacy, many=True)
+            travel_option_serializer = TravelOptionSerializer(travel_options, many=True)
+            data[i]['local_delicacy'] = local_delicacy_serializer.data
+            data[i]['hotels'] = hotel_serializer.data
+            data[i]['itinerary'] = itinerary_serializer.data
+            data[i]['places'] = sites_serializer.data
+            data[i]['travel_options'] = travel_option_serializer.data
+
+        return Response(data)
+    
+
+
+class DeleteTripView(APIView):
+    def post(self, request):
+        trip_id = request.data['tripId']
+        trip = Trip.objects.get(id=trip_id)
+        trip.is_save = False
+        trip.save()
+
+        return Response({'message:success'})

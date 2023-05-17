@@ -28,7 +28,6 @@ class SetDestinationView(APIView):
         destination = request.data.get('destination')
         currency = request.data.get('currency')
         num_people = request.data.get('num_persons')
-
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -56,14 +55,14 @@ class SetDestinationView(APIView):
             max_tokens=3,
             n=1,
             stop=None,
-            temperature=0.9,
+            temperature=0.7,
         )
 
         result = response.choices[0].text.strip()
         if result == 'Yes':
             trip = Trip.objects.create(
                 user=user,
-                current_location=current_location,
+                current_location=current_location[0],
                 currency=currency,
                 no_of_people=num_people,
                 destination=destination[0],
@@ -274,9 +273,10 @@ class BookingView(APIView):
             bot.land_first_page()
             bot.select_place_to_go(destination)
             bot.select_date(start_date, end_date)
-            bot.occupancy()
+            bot.occupancy(trip.no_of_people)
             bot.search()
             hotels=bot.collect_data()
+            bot.close()
         
         for hotel in hotels:
             Hotel.objects.create(trip=trip, name=hotel['name'], price=hotel['price'],rating=hotel['rating'], total_rating=hotel['total_rating'], image_url=hotel['image_url'], booking_url = hotel['booking_link'], hotel_url= hotel['hotel_link'])
@@ -284,7 +284,7 @@ class BookingView(APIView):
         return Response({"hotels":hotels})
 
 
-class LocalDelicacy(APIView):
+class LocalDelicacyView(APIView):
     throttle_classes = [UserRateThrottle]
     def get(self, request):
         trip_id = request.session.get('trip_id')
@@ -306,6 +306,9 @@ class LocalDelicacy(APIView):
         result = response.choices[0].text.strip()
   
         delicacies = extract_delicacy(result)
+
+        for delicacy in delicacies:
+            LocalDelicacy.objects.create(trip=trip, name=delicacy['name'], description=delicacy['description'])
 
         return Response({'delicacies':delicacies})
     
@@ -335,9 +338,19 @@ class TravelOptionsView(APIView):
         result = response.choices[0].text.strip()
         
         travel_options = extract_travel_options(result)
-        print(travel_options)
-      
+        for option in travel_options:
+            TravelOption.objects.create(trip=trip, option=option['option'], description=option['description'])
       
         return Response({'travel_options':travel_options})
-
     
+
+class SaveTripView(APIView):
+    def post(self, request):
+
+        trip_id = request.session.get('trip_id')
+        trip = Trip.objects.get(id=trip_id)
+
+        trip.is_save = True
+        trip.save()
+    
+        return Response({'message':'success'})

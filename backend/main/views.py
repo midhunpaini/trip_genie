@@ -4,6 +4,8 @@ from django.core.mail import send_mail, EmailMessage
 from trip_genie.settings import EMAIL_HOST_USER
 
 
+
+
 class ContactView(APIView):
     def post(self, request):
         name = request.data['name']
@@ -27,3 +29,7 @@ class ContactView(APIView):
         )
 
         return Response({"success":"email sent"})
+    
+
+
+            

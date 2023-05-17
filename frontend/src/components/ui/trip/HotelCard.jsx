@@ -1,30 +1,27 @@
-import React from 'react';
-import {Link} from "react-router-dom"
-
+import React from "react";
+import { Link } from "react-router-dom";
 
 const HotelCard = ({ hotel }) => {
-  console.log(hotel.hotel_url)
   return (
-    
     <div className="wrapper m-4 bg-gray-400 antialiased text-gray-900">
-        
       <div>
         <Link to={hotel.hotel_link} target="_blank">
-        <img
-          src={hotel.image_url}
-          alt="random image"
-          className="w-full object-cover object-center rounded-lg shadow-md"
-        />
+          <img
+            src={hotel.image_url}
+            alt="random image"
+            className="w-full object-cover object-center rounded-lg shadow-md"
+          />
         </Link>
         <div className="relative px-4 -mt-16">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="flex items-baseline">
-              <span >
-                
-                <button className="bg-teal-200 text-teal-800 text-xs px-2 inline-block rounded-full uppercase font-semibold tracking-wide"><Link to={hotel.booking_link} target='_blank'>Book Now</Link></button>
-                
+              <span>
+                <button className="bg-teal-200 text-teal-800 text-xs px-2 inline-block rounded-full uppercase font-semibold tracking-wide">
+                  <Link to={hotel.booking_link} target="_blank">
+                    Book Now
+                  </Link>
+                </button>
               </span>
-            
             </div>
 
             <p className="mt-1 font-semibold uppercase  truncate">

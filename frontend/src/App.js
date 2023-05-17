@@ -8,7 +8,7 @@ import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Trip from "./pages/Trip";
-import { useState } from "react";
+import { useState, lazy } from "react";
 import ModalContext from "./utils/context/modalContext";
 import useUser from "./utils/hooks/useUser";
 import UserContext from "./utils/context/userContext";
@@ -17,15 +17,27 @@ import { Provider } from "react-redux";
 import store from "./utils/redux/store";
 import Testing from "./pages/Testing";
 import GroupOptionContext from "./utils/context/groupOptionContext";
+import SavedTrips from "./pages/SavedTrips";
+import TripDetails from "./components/ui/trip/TripDetails";
+
 
 const App = () => {
-  const [groupOption, setGroupOption] = useState(["Friends","Family","Couple","Solo", "Business","Other",]);
+  const [groupOption, setGroupOption] = useState([
+    "Friends",
+    "Family",
+    "Couple",
+    "Solo",
+    "Business",
+    "Other",
+  ]);
   const [modal, setModal] = useState("hide");
   const user = useUser();
+  
+  
   const appRouter = createBrowserRouter([
     {
       path: "/",
-      element: <Landing />,
+      element: <Provider store={store}><Landing /></Provider>,
     },
     {
       path: "/about",
@@ -45,34 +57,62 @@ const App = () => {
     },
     {
       path: "/test",
-      element: <Testing/>,
-    }
+      element: <Testing />,
+    },
+    {
+      path: "/saved_trips",
+
+      element: (
+        <Provider store={store}>
+          <SavedTrips />
+        </Provider>
+      ),
+    },
+    {
+      path: "/show_trip/:id",
+
+      element: (
+        <Provider store={store}>
+          <TripDetails />
+        </Provider>
+      ),
+    },
+    {
+      path: "/download_trip/:id",
+
+      element: (
+        <Provider store={store}>
+          <TripDetails />
+        </Provider>
+      ),
+    },
   ]);
 
   return (
     <>
-    <GroupOptionContext.Provider
-    value={{
-      setGroupOption:setGroupOption,
-      groupOption:groupOption
-    }}>
-      <UserContext.Provider
+      <GroupOptionContext.Provider
         value={{
-          user: user.user,
-          setUser: user.setUser,
-          logout: logoutUser,
-          loading: user.loading,
+          setGroupOption: setGroupOption,
+          groupOption: groupOption,
         }}
       >
-        <ModalContext.Provider
+        <UserContext.Provider
           value={{
-            modal: modal,
-            setModal: setModal,
+            user: user.user,
+            setUser: user.setUser,
+            logout: logoutUser,
+            loading: user.loading,
           }}
         >
-          <RouterProvider router={appRouter} />
-        </ModalContext.Provider>
-      </UserContext.Provider>
+          <ModalContext.Provider
+            value={{
+              modal: modal,
+              setModal: setModal,
+            }}
+          >
+            <RouterProvider router={appRouter} />
+          </ModalContext.Provider>
+        </UserContext.Provider>
       </GroupOptionContext.Provider>
     </>
   );

@@ -12,6 +12,8 @@ class Booking(webdriver.Chrome):
     def __init__(self, driver_path=r'C:\selenium-driver', teardown=False):
         options = Options()
         options.add_experimental_option('detach', True)
+        # options.add_argument('--headless')
+        # options.add_argument('--disable-gpu')
         self.driver_path = driver_path
         self.teardown = teardown
         super(Booking, self).__init__(options=options)
@@ -25,60 +27,72 @@ class Booking(webdriver.Chrome):
         self.get(const)
 
 
-    def contact_us(self):
-        contact = self.find_element(By.PARTIAL_LINK_TEXT, 'Contact' )
-        contact.click()
-
-    
-
     def select_place_to_go(self, place):
-        # Find the search field and enter the place to go
-        search_field = self.find_element(By.ID, ':Ra9:')
-        search_field.clear()
-        search_field.send_keys(place)
-        time.sleep(1)
+        try:
+            # Find the search field and enter the place to go
+            search_field = self.find_element(By.ID, ':Ra9:')
+            search_field.clear()
+            search_field.send_keys(place)
+            time.sleep(1)
 
-        # Wait for the modal to be visible and dismiss it
-        modal = WebDriverWait(self, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, 'button[aria-label="Dismiss sign-in info."]'))
-        )
-        modal.click()
-        time.sleep(1)
+            # Wait for the modal to be visible and dismiss it
+            modal = WebDriverWait(self, 10).until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, 'button[aria-label="Dismiss sign-in info."]'))
+            )
+            modal.click()
+            time.sleep(1)
 
-        search_field.click()
-        search_item = self.find_element(By.CSS_SELECTOR, 'div[role="button"]')
-        search_item.click()
-        time.sleep(1)
-
+            search_field.click()
+            search_item = self.find_element(By.CSS_SELECTOR, 'div[role="button"]')
+            search_item.click()
+            time.sleep(1)
+        except NoSuchElementException:
+            print('Element not found')
+            
     def select_date(self, start_date, end_date):
-        start_date_field = self.find_element(By.CSS_SELECTOR, f'span[data-date="{start_date}"]')
-        start_date_field.click()
-        time.sleep(1)
+        try:
+            start_date_field = self.find_element(By.CSS_SELECTOR, f'span[data-date="{start_date}"]')
+            start_date_field.click()
+            time.sleep(1)
 
-        end_date_field = self.find_element(By.CSS_SELECTOR, f'span[data-date="{end_date}"]')
-        end_date_field.click()
-        time.sleep(1)
+            end_date_field = self.find_element(By.CSS_SELECTOR, f'span[data-date="{end_date}"]')
+            end_date_field.click()
+            time.sleep(1)
+        except NoSuchElementException:
+            print('Element not found')
 
 
-    def occupancy(self):
-        occupancy = self.find_element(By.CSS_SELECTOR, 'button[data-testid="occupancy-config"]')
-        occupancy.click()
-        time.sleep(1)
+    def occupancy(self, num_people):
+        try:
+            occupancy = self.find_element(By.CSS_SELECTOR, 'button[data-testid="occupancy-config"]')
+            occupancy.click()
+            time.sleep(1)
 
-        select_occupancy = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 e3c025e003 fa565176a8 f7db01295e c334e6f658 e1b7cfea84 cd7aa7c891"]')
-        select_occupancy.click()
-        time.sleep(1)
+            select_occupancy = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 e3c025e003 fa565176a8 f7db01295e c334e6f658 e1b7cfea84 cd7aa7c891"]')
+            select_occupancy.click()
+            time.sleep(1)
 
-        click_occupancy = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 e2b4ffd73d f7db01295e c938084447 a9a04704ee d285d0ebe9"]')
-        click_occupancy.click()
-        time.sleep(1)
+            if num_people > 1:
+                for _ in range(int(num_people)-1):
+                    select_num_people = self.find_element(By.XPATH, '//*[@id="indexsearch"]/div[2]/div/div/form/div[1]/div[3]/div/div/div/div/div[1]/div[2]/button[2]')
+                    select_num_people.click()
+                    time.sleep(0.5)
+
+            click_occupancy = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 e2b4ffd73d f7db01295e c938084447 a9a04704ee d285d0ebe9"]')
+            click_occupancy.click()
+            time.sleep(1)
+        except NoSuchElementException:
+            print('Element not found')
 
 
     def search(self):
-        search = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 d4b6b7a9e7 cfb238afa1 c938084447 f4605622ad aa11d0d5cd"]')
-        search.click()
-        time.sleep(3)
-        current_url = self.current_url
+        try:
+            search = self.find_element(By.CSS_SELECTOR, 'button[class="fc63351294 a822bdf511 d4b6b7a9e7 cfb238afa1 c938084447 f4605622ad aa11d0d5cd"]')
+            search.click()
+            time.sleep(3)
+        except:
+            print('Element not found')
+        
     
 
     def collect_data(self):
@@ -107,7 +121,7 @@ class Booking(webdriver.Chrome):
                     print("Element not found")
         except NoSuchElementException:
             print("Search results table not found")
-
-        return hotels_data
+        finally:
+            return hotels_data
 
 

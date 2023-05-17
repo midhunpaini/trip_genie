@@ -68,7 +68,7 @@ def extract_delicacy(data):
     
 def extract_travel_options(string):
     lines = string.split('\n')
-    print(lines)
+
     travel_options = []
     try:
         for line in lines:
@@ -78,9 +78,12 @@ def extract_travel_options(string):
             mode = parts[0].strip()
             description = parts[1].strip()
             travel_options.append({"option": mode, "description": description})
+        if len(travel_options) == 0:
+            mode = 'Travel Options'
+            description = lines.strip('\n\n')
     except:
         Exception
-        
+      
     return travel_options
 
     

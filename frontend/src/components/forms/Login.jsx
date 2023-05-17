@@ -3,8 +3,9 @@ import ModalContext from "../../utils/context/modalContext";
 import UserContext from "../../utils/context/userContext";
 import { submitLogin } from "../../utils/helper";
 
+
 const Login = () => {
-  const { setUser } = useContext(UserContext);
+  const { setUser,user } = useContext(UserContext);
   const { setModal } = useContext(ModalContext);
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -16,6 +17,7 @@ const Login = () => {
       const name = await submitLogin(email, password);
       setUser(name);
       setModal("hide");
+      
     } catch (error) {
       setErrorMessage(error.message);
       setCurrentError(error.message);
@@ -30,6 +32,9 @@ const Login = () => {
     }
     handleLogin();
   };
+  console.log(user)
+
+
   return (
     <div className="flex justify-center items-center border bottom-9 rounded-xl border-black bg-gray-100">
       <div className="w-full max-w-md bg-gray-100  m-8">
