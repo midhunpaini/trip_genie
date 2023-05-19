@@ -2,21 +2,30 @@ import { useContext, useState } from "react";
 import ModalContext from "../../utils/context/modalContext";
 import UserContext from "../../utils/context/userContext";
 import { submitLogin } from "../../utils/helper";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
-  const { setUser,user } = useContext(UserContext);
+  const { setUser ,loading,setIsSuperUser } = useContext(UserContext);
   const { setModal } = useContext(ModalContext);
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [currentError, setCurrentError] = useState("");
 
+  const navigate = useNavigate()
+
   const handleLogin = async () => {
     try {
-      const name = await submitLogin(email, password);
-      setUser(name);
+      const user = await submitLogin(email, password);
+      console.log(user.name)
+      setUser(user.name);
       setModal("hide");
+      setIsSuperUser(user.is_superuser)
+      if(user.is_superuser){
+        navigate('/admin')
+      }
+      
       
     } catch (error) {
       setErrorMessage(error.message);
@@ -32,8 +41,10 @@ const Login = () => {
     }
     handleLogin();
   };
-  console.log(user)
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex justify-center items-center border bottom-9 rounded-xl border-black bg-gray-100">

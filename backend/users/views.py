@@ -53,7 +53,8 @@ class Login(APIView):
         response.data = {
             'jwt':token,
             'message':True,
-            'name':user.name
+            'name':user.name,
+            'is_superuser':user.is_superuser
         }
         return response
     
@@ -66,14 +67,11 @@ class UserViews(APIView):
         
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-            print(payload)
-            print(token)
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated')
         
         user = User.objects.filter(id=payload['id']).first()
-        
-        print('user calling')
+
         serializer = UserSerializers(user)
         return Response(serializer.data)
     
@@ -145,3 +143,84 @@ class DeleteTripView(APIView):
         trip.save()
 
         return Response({'message:success'})
+
+
+class AllUsersView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+        
+        if not token:
+            raise AuthenticationFailed('Unauthenticated')
+        
+        users = User.objects.filter(is_superuser=False)
+        serializer = UserSerializers(users, many=True)
+        return Response(serializer.data)
+    
+
+
+class ChangeUserStaus(APIView):
+    def post(self, request):
+        token = request.COOKIES.get('jwt')
+        id = request.data['id']
+        
+        if not token:
+            raise AuthenticationFailed('Unauthenticated')
+        
+        user = User.objects.get(id=id)
+        if user.is_active:
+            user.is_active = False
+        else:
+            user.is_active = True
+        
+        user.save()
+        
+        return Response({'user': False})
+    
+
+class AdminLogin(APIView):
+    throttle_classes = [UserRateThrottle]
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+        user = User.objects.filter(email=email, is_superuser=True).first()
+
+        
+        
+        if user is None:
+            raise AuthenticationFailed('User not Found')
+        
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect Password')
+        
+        payload = {
+            'id':user.id,
+            'exp':datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat':datetime.datetime.utcnow()
+        }
+        
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        
+        response = Response()
+        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.data = {
+            'jwt':token,
+            'message':True,
+            'name':user.name,
+            'is_superuser':user.is_superuser
+        }
+        return response
+    
+
+class NewUsersCount(APIView):
+    def get(self, request):
+        date = datetime.datetime.now() - datetime.timedelta(hours=24)
+        total_users = User.objects.filter(is_superuser=False).count()
+        new_users = User.objects.filter(date_joined__gte=date).count()
+        increase_in_users = int((new_users/total_users)*100)
+
+        data = {
+            'new':new_users,
+            'increase':increase_in_users
+        }
+
+        return Response(data)

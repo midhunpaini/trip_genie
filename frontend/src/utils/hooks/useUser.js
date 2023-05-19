@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 const userApi = process.env.REACT_APP_GET_USER_API
 const useUser = () => {
   const [user, setUser] = useState()
+  const [isSuperUser, setIsSuperUser] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -17,6 +18,8 @@ const useUser = () => {
       })
       const json = await data.json()
       setUser(json.name)
+      setIsSuperUser(json.is_superuser)
+
       setLoading(false)
     } catch (error) {
       console.error("Error fetching user:", error)
@@ -24,7 +27,7 @@ const useUser = () => {
     }
   }
 
-  return { user, setUser, loading }
+  return { user, setUser, loading, setIsSuperUser, isSuperUser }
 }
 
 export default useUser

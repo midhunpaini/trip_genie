@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 
 
 
@@ -27,6 +28,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_premium = models.BooleanField(default=False)
+    last_login = models.DateTimeField(default=timezone.now, blank=True)
     username = None
     
     

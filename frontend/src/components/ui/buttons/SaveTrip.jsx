@@ -18,7 +18,7 @@ const SaveTrip = ({ setIsSaved, }) => {
       // the trip was saved successfully
       setIsSaved(true);
       setModal("alert");
-      // navigate('/saved_trips')
+      navigate('/')
     } else if (response.status === 302) {
       // the server returned a redirect response
       window.location.href = response.headers.get("Location");

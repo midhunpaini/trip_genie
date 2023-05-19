@@ -7,8 +7,6 @@ const userTripSlice = createSlice({
   reducers: {
     addUserTrips: (state, action) => {
       state.value = action.payload;
-      console.log(state,'state')
-      console.log(action, 'action')
     },
   },
 });

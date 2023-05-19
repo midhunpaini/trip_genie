@@ -85,7 +85,8 @@ export const submitLogin = async (email, password) => {
   if (!response.ok) {
     throw new Error(data.detail);
   }
-  return data.name;
+  
+  return data;
 };
 
 export const callHotels = async (dispatch, addAccomodation) => {

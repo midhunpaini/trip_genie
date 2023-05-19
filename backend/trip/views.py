@@ -13,7 +13,6 @@ from . serializers import *
 openai.api_key = GPT_KEY
 from rest_framework.throttling import UserRateThrottle
 from .scrap.booking import Booking
-from .scrap.delicacy import Delicacy
 from datetime import date
 
 
@@ -281,6 +280,7 @@ class BookingView(APIView):
         for hotel in hotels:
             Hotel.objects.create(trip=trip, name=hotel['name'], price=hotel['price'],rating=hotel['rating'], total_rating=hotel['total_rating'], image_url=hotel['image_url'], booking_url = hotel['booking_link'], hotel_url= hotel['hotel_link'])
         
+        print(hotels)
         return Response({"hotels":hotels})
 
 

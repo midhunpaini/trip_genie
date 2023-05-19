@@ -36,7 +36,7 @@ const Header = () => {
           </Link>
 
           {user ? (
-            <>
+            <div className="mr-5">
               <li
                 onClick={toggleDropdown}
                 className={`relative mr-8 cursor-pointer ${showDropdown ? "text-black" : ""}`}
@@ -51,7 +51,7 @@ const Header = () => {
                   </ul>
                 )}
               </li>
-            </>
+            </div>
           ) : (
             <li
               onClick={() => {

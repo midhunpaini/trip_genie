@@ -2,7 +2,7 @@ import re
 import jwt
 from rest_framework.exceptions import AuthenticationFailed
 from functools import wraps
-from .scrap.delicacy import Delicacy
+
 
 def authenticated(view_func):
     @wraps(view_func)

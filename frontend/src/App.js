@@ -1,7 +1,8 @@
 import {
   RouterProvider,
   createBrowserRouter,
-  Redirect,
+  Routes,
+  Route,
 } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import Landing from "./pages/Landing";
@@ -20,7 +21,6 @@ import GroupOptionContext from "./utils/context/groupOptionContext";
 import SavedTrips from "./pages/SavedTrips";
 import TripDetails from "./components/ui/trip/TripDetails";
 
-
 const App = () => {
   const [groupOption, setGroupOption] = useState([
     "Friends",
@@ -30,14 +30,17 @@ const App = () => {
     "Business",
     "Other",
   ]);
+
   const [modal, setModal] = useState("hide");
   const user = useUser();
-  
-  
   const appRouter = createBrowserRouter([
     {
       path: "/",
-      element: <Provider store={store}><Landing /></Provider>,
+      element: (
+        <Provider store={store}>
+          <Landing />
+        </Provider>
+      ),
     },
     {
       path: "/about",
@@ -61,7 +64,6 @@ const App = () => {
     },
     {
       path: "/saved_trips",
-
       element: (
         <Provider store={store}>
           <SavedTrips />
@@ -70,7 +72,6 @@ const App = () => {
     },
     {
       path: "/show_trip/:id",
-
       element: (
         <Provider store={store}>
           <TripDetails />
@@ -79,7 +80,6 @@ const App = () => {
     },
     {
       path: "/download_trip/:id",
-
       element: (
         <Provider store={store}>
           <TripDetails />
@@ -88,35 +88,41 @@ const App = () => {
     },
   ]);
 
-  return (
-    <>
-      <GroupOptionContext.Provider
-        value={{
-          setGroupOption: setGroupOption,
-          groupOption: groupOption,
-        }}
-      >
-        <UserContext.Provider
+
+
+    return (
+      <>
+        <GroupOptionContext.Provider
           value={{
-            user: user.user,
-            setUser: user.setUser,
-            logout: logoutUser,
-            loading: user.loading,
+            setGroupOption: setGroupOption,
+            groupOption: groupOption,
           }}
         >
-          <ModalContext.Provider
+          <UserContext.Provider
             value={{
-              modal: modal,
-              setModal: setModal,
+              user: user.user,
+              setUser: user.setUser,
+              logout: logoutUser,
+              loading: user.loading,
+              setIsSuperUser: user.setIsSuperUser,
             }}
           >
-            <RouterProvider router={appRouter} />
-          </ModalContext.Provider>
-        </UserContext.Provider>
-      </GroupOptionContext.Provider>
-    </>
-  );
-};
+            <ModalContext.Provider
+              value={{
+                modal: modal,
+                setModal: setModal,
+              }}
+            >
+              <RouterProvider router={appRouter} />
+            </ModalContext.Provider>
+          </UserContext.Provider>
+        </GroupOptionContext.Provider>
+      </>
+    );
+  }
+
+  
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
