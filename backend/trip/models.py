@@ -69,11 +69,15 @@ class Trip(models.Model):
     current_location = models.CharField(max_length=200)
     destination = models.CharField(max_length=200)
     destination_id = models.CharField(max_length=200, null=True, blank=True)
+    country_code = models.CharField(max_length=200, null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     no_of_people = models.IntegerField(null=True,blank=True)
     budget = models.IntegerField(null=True,blank=True)
     currency = models.CharField(max_length=200, null=True,blank=True)
     is_save = models.BooleanField(default=False)
+    group_type = models.CharField(max_length=250, blank=True, null=True)
+    dietery_preference = models.CharField(max_length=250, blank=True, null=True)
+    
     
     

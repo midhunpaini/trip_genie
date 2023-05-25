@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TravelOptions = ({options}) => {
-  console.log(options)
+
   return (
     <div className="max-w-lg mx-auto py-4">
       {options.map((option) => (

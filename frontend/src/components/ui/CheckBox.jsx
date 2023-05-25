@@ -1,7 +1,6 @@
 import React from "react";
 
 const CheckBox = ({ values, setValues, items, label }) => {
-  console.log(items, "*******************************************");
   return (
     <div className="">
       <label className="block font-bold mb-2">{label}</label>

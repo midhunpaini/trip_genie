@@ -1,10 +1,15 @@
 import { useContext } from "react";
 import ModalContext from "../../../utils/context/modalContext";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { callUserTrip } from "../../../utils/helper";
+import { addUserTrips } from "../../../utils/redux/userTripSlice"
+import Alert from "../Alert";
+import { addAccomodation, setInitial } from "../../../utils/redux/accommodationSlice";
 
 const saveTripApi = process.env.REACT_APP_SAVE_TRIP_API;
 const SaveTrip = ({ setIsSaved, }) => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { setModal } = useContext(ModalContext);
   async function handleClick() {
@@ -15,15 +20,16 @@ const SaveTrip = ({ setIsSaved, }) => {
     });
 
     if (response.ok) {
-      // the trip was saved successfully
       setIsSaved(true);
-      setModal("alert");
-      navigate('/')
+      const trips = await callUserTrip();
+      dispatch(addUserTrips(trips));
+      dispatch(setInitial())
+      localStorage.setItem('trips', JSON.stringify(trips));
+      <Alert/>
+      navigate('/saved_trips')
     } else if (response.status === 302) {
-      // the server returned a redirect response
       window.location.href = response.headers.get("Location");
     } else {
-      // there was an error saving the trip
       console.error("Failed to save trip:", response.statusText);
       setModal("error");
     }

@@ -15,15 +15,7 @@ import { callUserTrip } from "../utils/helper";
 const Landing = () => {
   const dispatch = useDispatch();
   const { modal } = useContext(ModalContext);
-  useEffect(() => {
-    async function geTTrips() {
-      const trips = await callUserTrip();
-      dispatch(addUserTrips(trips));
-      localStorage.setItem('trips', JSON.stringify(trips));
-    }
-
-    geTTrips();
-  }, []);
+ 
 
   return (
     <div className="bg-gray-100">

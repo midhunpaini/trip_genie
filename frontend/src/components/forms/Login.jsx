@@ -1,9 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import ModalContext from "../../utils/context/modalContext";
 import UserContext from "../../utils/context/userContext";
 import { submitLogin } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { callUserTrip } from "../../utils/helper";
+import { addUserTrips } from "../../utils/redux/userTripSlice";
 
 const Login = () => {
   const { setUser ,loading,setIsSuperUser } = useContext(UserContext);
@@ -14,14 +16,20 @@ const Login = () => {
   const [currentError, setCurrentError] = useState("");
 
   const navigate = useNavigate()
-
+  const dispatch = useDispatch();
+  
   const handleLogin = async () => {
     try {
       const user = await submitLogin(email, password);
-      console.log(user.name)
+
       setUser(user.name);
       setModal("hide");
       setIsSuperUser(user.is_superuser)
+      if (user){
+        const trips = await callUserTrip();
+      dispatch(addUserTrips(trips));
+      localStorage.setItem('trips', JSON.stringify(trips));
+      }
       if(user.is_superuser){
         navigate('/admin')
       }
@@ -32,7 +40,7 @@ const Login = () => {
       setCurrentError(error.message);
     }
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -105,8 +113,8 @@ const Login = () => {
             </button>
           </div>
         </form>
-        <p className="text-sm text-gray-600 mb-4">Or login using:</p>
-        <div className="flex justify-center mb-4">
+        {/* <p className="text-sm text-gray-600 mb-4">Or login using:</p> */}
+        {/* <div className="flex justify-center mb-4">
           <a
             href="#"
             className="py-2 px-4 rounded-md bg-white text-gray-600 font-medium hover:bg-gray-100 transition duration-200 ease-in-out mr-2"
@@ -119,7 +127,7 @@ const Login = () => {
           >
             <i className="fab fa-google mr-2"></i>Google
           </a>
-        </div>
+        </div> */}
         <div className="text-sm text-gray-600">
           Don't have an account?{" "}
           <p onClick={()=>{setModal('register')}}

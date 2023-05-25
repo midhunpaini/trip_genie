@@ -97,7 +97,7 @@ export const callHotels = async (dispatch, addAccomodation) => {
       credentials: "include",
     });
     const json = await data.json();
-    console.log(json);
+
     dispatch(
       addAccomodation({
         data: json,
@@ -111,7 +111,7 @@ export const callHotels = async (dispatch, addAccomodation) => {
 };
 
 export const callDelicacy = async (dispatch, addLocalDelicacy) => {
-  console.log("calling delicacy");
+
   try {
     const data = await fetch(delicacyApi, {
       headers: { "Content-Type": "application/json" },
@@ -286,7 +286,6 @@ export const handlesetDestinationSubmit = async (
 
 export const setTravelPreferences = async () => {
   try {
-    console.log("inside helper");
     const data = await fetch(activitiesApi, {
       headers: { "Content-Type": "application/json" },
       credentials: "include",

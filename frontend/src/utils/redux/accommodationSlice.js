@@ -13,9 +13,12 @@ const accommodationSlice = createSlice({
     addAccomodation: (state, action) => {
       state.value = action.payload;
     },
+    setInitial: (state) => {
+      state.value = initialValue;
+    },
   },
 });
 
-export const { addAccomodation } = accommodationSlice.actions;
+export const { addAccomodation, setInitial } = accommodationSlice.actions;
 
 export default accommodationSlice.reducer;

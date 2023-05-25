@@ -11,4 +11,5 @@ urlpatterns = [
     path('delicacy',LocalDelicacyView.as_view(), name='delicacy' ),
     path('travel_options',TravelOptionsView.as_view(), name='travel_options' ),
     path('save_trip',SaveTripView.as_view(), name='save_trip' ),
+    path('test',TestView.as_view(), name='test' ),
 ]

@@ -9,11 +9,11 @@ const Input = ({
   isGooglePlacesAutocomplete,
 }) => {
   let text = 'text'
-  if (label==='Budget:'){
+  if (label!=='Destination:'){
      text = 'number'
   }
   const [googlePlacesValue, setGooglePlacesValue] = useState(null);
-
+ 
   const handleChange = (e) => {
     setValue(e.target.value);
   };
@@ -45,6 +45,7 @@ const Input = ({
       <input
         required
         className={style}
+        min={1}
         type={text}
         value={value}
         onChange={handleChange}

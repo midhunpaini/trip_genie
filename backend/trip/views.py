@@ -13,11 +13,18 @@ from . serializers import *
 openai.api_key = GPT_KEY
 from rest_framework.throttling import UserRateThrottle
 from .scrap.booking import Booking
-from datetime import date
+from rest_framework.exceptions import ValidationError
 
 
 class SetDestinationView(APIView):
     throttle_classes = [UserRateThrottle]
+
+    def validate_date(self, date_str):
+        try:
+            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            return date
+        except ValueError:
+            raise ValidationError("Invalid date format. Please use the format 'YYYY-MM-DD'.")
 
     def post(self, request):
         start_date = request.data.get('start_date')
@@ -26,7 +33,7 @@ class SetDestinationView(APIView):
         current_location = request.data.get('current_location')
         destination = request.data.get('destination')
         currency = request.data.get('currency')
-        num_people = request.data.get('num_persons')
+        num_people = int(request.data.get('num_persons'))
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -38,11 +45,15 @@ class SetDestinationView(APIView):
             raise AuthenticationFailed('Unauthenticated')
 
         today = datetime.date.today()
-        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
-        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
 
         if start_date > end_date or start_date < today:
-            return Response({"itinerary": [], "places": [],"message":"Invalid date"})
+            raise ValidationError("Invalid date range. Start date must be later than today, and end date must be later than start date.")
+
+        if not isinstance(num_people, int) or num_people < 1:
+            raise ValidationError("Invalid number of people. Number of people must be a positive integer.")
 
         user = User.objects.filter(id=payload['id']).first()
 
@@ -57,6 +68,20 @@ class SetDestinationView(APIView):
             temperature=0.7,
         )
 
+        gmaps = googlemaps.Client(key=GOOGLE_PLACES_KEY)
+        place_id = destination[1]  # Replace with the actual place_id
+
+        # Get the place details using the place API
+        place_details = gmaps.place(place_id=place_id, fields=['address_component'])
+
+        # Extract the country code from the place details
+        for component in place_details['result']['address_components']:
+            if 'country' in component['types']:
+                country_code = component['short_name']
+                break
+
+        
+
         result = response.choices[0].text.strip()
         if result == 'Yes':
             trip = Trip.objects.create(
@@ -68,6 +93,7 @@ class SetDestinationView(APIView):
                 destination_id=destination[1],
                 start_date=start_date,
                 end_date=end_date,
+                country_code = country_code,
                 budget=budget
             )
             request.session['trip_id'] = trip.id
@@ -172,6 +198,10 @@ class GPTView(APIView):
         end_date = trip.end_date
         currency = trip.currency
         budget = trip.budget
+        trip.group_type = group_type
+        trip.dietery_preference = dietary_requirements
+        trip.save()
+        
 
         today = datetime.date.today()
         if start_date > end_date or start_date < today:
@@ -280,7 +310,7 @@ class BookingView(APIView):
         for hotel in hotels:
             Hotel.objects.create(trip=trip, name=hotel['name'], price=hotel['price'],rating=hotel['rating'], total_rating=hotel['total_rating'], image_url=hotel['image_url'], booking_url = hotel['booking_link'], hotel_url= hotel['hotel_link'])
         
-        print(hotels)
+
         return Response({"hotels":hotels})
 
 
@@ -349,8 +379,26 @@ class SaveTripView(APIView):
 
         trip_id = request.session.get('trip_id')
         trip = Trip.objects.get(id=trip_id)
-
         trip.is_save = True
         trip.save()
     
         return Response({'message':'success'})
+    
+
+class TestView(APIView):
+    def get(self, request):
+        gmaps = googlemaps.Client(key=GOOGLE_PLACES_KEY)
+        place_id = 'ChIJQbc2YxC6vzsRkkDzYv-H-Oo' # Replace with the actual place_id
+
+        # Get the place details using the place API
+        place_details = gmaps.place(place_id=place_id, fields=['address_component'])
+
+        # Extract the country code from the place details
+        for component in place_details['result']['address_components']:
+            if 'country' in component['types']:
+                country_code = component['short_name']
+                break
+
+
+
+        return Response({'code':country_code})

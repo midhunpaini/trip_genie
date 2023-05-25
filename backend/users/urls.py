@@ -12,6 +12,7 @@ urlpatterns = [
     path('delete_trip',DeleteTripView.as_view(), name='delete_trip' ), 
     path('users',AllUsersView.as_view(), name='users' ), 
     path('block',ChangeUserStaus.as_view(), name='block'), 
-    path('data',NewUsersCount.as_view(), name='data'), 
+    path('data',GetSiteData.as_view(), name='data'), 
+    path('fake',FakeDataView.as_view(), name='fake'), 
        
 ]

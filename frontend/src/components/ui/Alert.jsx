@@ -1,16 +1,29 @@
-import {useContext} from "react";
-import ModalContext from "../../utils/context/modalContext";
+import { useState } from "react";
 
 
-const Alert = ({message}) => {
-    const {setModal} = useContext(ModalContext)
+const Alert = ({ message, setShowAlert }) => {
+  const [alert, setAlert] = useState(true)
+  function handleClick(){
+    setAlert(false)
+    setShowAlert(false)
+  }
   return (
-    <div
-      className="bg-[#e4be8d] border text-center border-[#a57c48] text-[#a57c48] px-[8rem] py-[1rem] rounded relative"
-      role="alert">
-        <h1 className="  text-black text-2xl">{message}</h1>
-        <button onClick={()=>{setModal('hide')}} className="px-10 m-5 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#a57c48] hover:bg-[#dba865] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#a57c48]">Ok</button>
+    <>
+    {alert &&(<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg">
+      <p className="text-gray-700 mb-6">{message}</p>
+      <div className="flex justify-end">
+       
+        <button
+          className="px-4 py-2 bg-red-500 text-white rounded-lg"
+          onClick={handleClick}
+        >
+          Ok
+        </button>
       </div>
+    </div>
+  </div>)}
+  </>
   );
 };
 

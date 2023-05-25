@@ -5,6 +5,7 @@ const useUser = () => {
   const [user, setUser] = useState()
   const [isSuperUser, setIsSuperUser] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
     getUser()
@@ -19,7 +20,7 @@ const useUser = () => {
       const json = await data.json()
       setUser(json.name)
       setIsSuperUser(json.is_superuser)
-
+      setIsLogged(true)
       setLoading(false)
     } catch (error) {
       console.error("Error fetching user:", error)
@@ -27,7 +28,7 @@ const useUser = () => {
     }
   }
 
-  return { user, setUser, loading, setIsSuperUser, isSuperUser }
+  return { user, setUser, loading, setIsSuperUser, isSuperUser, isLogged, setIsLogged }
 }
 
 export default useUser

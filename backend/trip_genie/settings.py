@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'users',
     'trip',
     'corsheaders',
-    'main'
+    'main',
+
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'trip_genie.urls'

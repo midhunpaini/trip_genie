@@ -1,25 +1,20 @@
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Trip from "./pages/Trip";
-import { useState, lazy } from "react";
+import { useState } from "react";
 import ModalContext from "./utils/context/modalContext";
 import useUser from "./utils/hooks/useUser";
 import UserContext from "./utils/context/userContext";
 import { logoutUser } from "./utils/helper";
 import { Provider } from "react-redux";
 import store from "./utils/redux/store";
-import Testing from "./pages/Testing";
 import GroupOptionContext from "./utils/context/groupOptionContext";
 import SavedTrips from "./pages/SavedTrips";
 import TripDetails from "./components/ui/trip/TripDetails";
+import ErrorPage from "./pages/ErrorPage";
 
 const App = () => {
   const [groupOption, setGroupOption] = useState([
@@ -36,11 +31,7 @@ const App = () => {
   const appRouter = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <Provider store={store}>
-          <Landing />
-        </Provider>
-      ),
+      element: <Landing />,
     },
     {
       path: "/about",
@@ -52,46 +43,29 @@ const App = () => {
     },
     {
       path: "/trip",
-      element: (
-        <Provider store={store}>
-          <Trip />
-        </Provider>
-      ),
-    },
-    {
-      path: "/test",
-      element: <Testing />,
+      element: <Trip />,
     },
     {
       path: "/saved_trips",
-      element: (
-        <Provider store={store}>
-          <SavedTrips />
-        </Provider>
-      ),
+      element: <SavedTrips />,
     },
     {
       path: "/show_trip/:id",
-      element: (
-        <Provider store={store}>
-          <TripDetails />
-        </Provider>
-      ),
+      element: <TripDetails />,
     },
     {
       path: "/download_trip/:id",
-      element: (
-        <Provider store={store}>
-          <TripDetails />
-        </Provider>
-      ),
+      element: <TripDetails />,
+    },
+    {
+      path: "/*",
+      element: <ErrorPage />,
     },
   ]);
 
-
-
-    return (
-      <>
+  return (
+    <>
+      <Provider store={store}>
         <GroupOptionContext.Provider
           value={{
             setGroupOption: setGroupOption,
@@ -117,12 +91,10 @@ const App = () => {
             </ModalContext.Provider>
           </UserContext.Provider>
         </GroupOptionContext.Provider>
-      </>
-    );
-  }
-
-  
-
+      </Provider>
+    </>
+  );
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);

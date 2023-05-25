@@ -11,7 +11,6 @@ const PdfButton = ({ data }) => {
     // setLoader(true);
     html2canvas(document.querySelector("#pdf-content")).then(canvas => {
      let base64Image = canvas.toDataURL('image/png')
-     console.log(base64Image)
   });
     
     // const doc = new jsPDF("p", "mm", "a4");

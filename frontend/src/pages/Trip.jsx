@@ -7,7 +7,8 @@ import Footer from "../components/layouts/Footer";
 import SetDestination from "../components/forms/SetDestination";
 import SetPreferences from "../components/forms/SetPreferences";
 import GroupOptionContext from "../utils/context/groupOptionContext";
-import TripSearchResult from "../components/ui/trip/TripSearchResult";
+
+
 const Trip = () => {
   const [submitForm, setSubmitForm] = useState(false);
   const [showForm, setShowForm] = useState(false);

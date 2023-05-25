@@ -614,4 +614,3 @@ for d in data:
         }
     )
 
-print(hotels)

@@ -15,7 +15,6 @@ import { addLocalDelicacy } from "../../utils/redux/localDelicacySlice"
 
 const SetPreference = () => {
   const {groupOption} = useContext(GroupOptionContext)
-  console.log(groupOption,'gropfasdfa option')
   const [submitForm, setSubmitForm] = useState(false);
   const [interests, setInterests] = useState("");
   const [dietary_requirements, setDietaryRequirements] = useState("");

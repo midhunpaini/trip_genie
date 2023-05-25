@@ -29,6 +29,7 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_premium = models.BooleanField(default=False)
     last_login = models.DateTimeField(default=timezone.now, blank=True)
+    google_auth = models.BooleanField(default=False)
     username = None
     
     
@@ -39,3 +40,5 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email   
+
+

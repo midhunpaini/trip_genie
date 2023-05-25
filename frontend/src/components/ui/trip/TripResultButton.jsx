@@ -13,8 +13,6 @@ const TripResultButton = ({ datas, sectionName, component}) => {
   const isLoading = datas?.isLoading
   const [isOpen, setIsOpen] = useState("");
   const data = datas?.data
-  console.log(data)
-  console.log(isFailure,isSuccess,isLoading,isOpen)
   function handleClick() {
     if (isSuccess) {
       setIsOpen(!isOpen);

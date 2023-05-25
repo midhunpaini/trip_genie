@@ -121,7 +121,7 @@ class Booking(webdriver.Chrome):
                   
                     total_rating = hotel.find_element(
                         By.XPATH, './div[1]/div[2]/div/div[1]/div/div[2]/div/div/div/a/span/div/div[2]/div[2]').text
-                    print('price')
+                 
 
                     # price = hotel.find_element(By.XPATH, "//span[@data-testid='price-and-discounted-price']").text
                     # print(price)
