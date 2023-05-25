@@ -150,10 +150,3 @@ class Booking(webdriver.Chrome):
             return hotels_data
 
 
-# with Booking() as bot:
-#     bot.land_first_page()
-#     bot.select_place_to_go('goa')
-#     bot.select_date('2023-05-19', '2023-05-21')
-#     bot.occupancy(2)
-#     bot.search()
-#     hotels = bot.collect_data()
